@@ -1,11 +1,22 @@
-   function App() {
-     return (
-       <div className="w-screen min-h-screen flex items-center justify-center bg-gray-100">
-         <h1 className="text-4xl font-bold text-blue-600">
-           Tailwind está funcionando
-         </h1>
-       </div>
-     )
-   }
+import { Routes, Route } from 'react-router-dom'
+import Home from './components/Home'
+import PerfilExperto from './components/PerfilExperto'
+import RegistroExperto from './components/RegistroExperto'
+import Login from './components/Login'
+import PanelExperto from './components/PanelExperto'
+import PanelAdmin from './components/PanelAdmin'
 
-   export default App
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/experto/:id" element={<PerfilExperto />} />
+      <Route path="/registro" element={<RegistroExperto />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/panel" element={<PanelExperto />} />
+      <Route path="/admin" element={<PanelAdmin />} />
+    </Routes>
+  )
+}
+
+export default App
