@@ -10,10 +10,14 @@ function PanelExperto() {
     nombre: '',
     categoria: '',
     descripcion: '',
-    ubicacion: '',
     whatsapp: '',
-    anosExperiencia: ''
+    anosExperiencia: '',
+    atiendePresencial: true,
+    atiendeVirtual: false
   })
+  const [ubicaciones, setUbicaciones] = useState([{ departamentoId: '', municipioId: '' }])
+  const [departamentos, setDepartamentos] = useState([])
+  const [municipiosPorDepartamento, setMunicipiosPorDepartamento] = useState({})
 
   const expertoId = localStorage.getItem('expertoId')
   const token = localStorage.getItem('token')
@@ -24,6 +28,10 @@ function PanelExperto() {
       return
     }
     cargarExperto()
+    fetch('http://localhost:3000/api/departamentos')
+      .then(res => res.json())
+      .then(data => setDepartamentos(data))
+      .catch(err => console.error('Error al cargar departamentos:', err))
   }, [expertoId, token, navigate])
 
   const cargarExperto = () => {
@@ -35,21 +43,86 @@ function PanelExperto() {
           nombre: data.nombre || '',
           categoria: data.categoria || '',
           descripcion: data.descripcion || '',
-          ubicacion: data.ubicacion || '',
           whatsapp: data.whatsapp || '',
-          anosExperiencia: data.anosExperiencia || ''
+          anosExperiencia: data.anosExperiencia || '',
+          atiendePresencial: data.atiendePresencial ?? true,
+          atiendeVirtual: data.atiendeVirtual ?? false
         })
       })
       .catch(err => console.error('Error al cargar el perfil:', err))
   }
 
+  const cargarMunicipios = (departamentoId) => {
+    if (municipiosPorDepartamento[departamentoId]) {
+      return
+    }
+    fetch('http://localhost:3000/api/municipios?departamento=' + departamentoId)
+      .then(res => res.json())
+      .then(data => {
+        setMunicipiosPorDepartamento((prev) => ({ ...prev, [departamentoId]: data }))
+      })
+      .catch(err => console.error('Error al cargar municipios:', err))
+  }
+
+  const iniciarEdicion = () => {
+    if (experto.ubicaciones && experto.ubicaciones.length > 0) {
+      const ubicacionesIniciales = experto.ubicaciones.map((u) => {
+        const departamentoId = u.departamento ? u.departamento._id : ''
+        if (departamentoId) {
+          cargarMunicipios(departamentoId)
+        }
+        return { departamentoId: departamentoId, municipioId: u._id }
+      })
+      setUbicaciones(ubicacionesIniciales)
+    } else {
+      setUbicaciones([{ departamentoId: '', municipioId: '' }])
+    }
+    setEditando(true)
+  }
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
+    const { name, type, checked, value } = e.target
+    setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value })
+  }
+
+  const handleDepartamentoChange = (index, departamentoId) => {
+    const nuevas = [...ubicaciones]
+    nuevas[index] = { departamentoId: departamentoId, municipioId: '' }
+    setUbicaciones(nuevas)
+    if (departamentoId) {
+      cargarMunicipios(departamentoId)
+    }
+  }
+
+  const handleMunicipioChange = (index, municipioId) => {
+    const nuevas = [...ubicaciones]
+    nuevas[index] = { ...nuevas[index], municipioId: municipioId }
+    setUbicaciones(nuevas)
+  }
+
+  const agregarUbicacion = () => {
+    setUbicaciones([...ubicaciones, { departamentoId: '', municipioId: '' }])
+  }
+
+  const quitarUbicacion = (index) => {
+    const nuevas = ubicaciones.filter((_, i) => i !== index)
+    setUbicaciones(nuevas)
   }
 
   const handleGuardar = (e) => {
     e.preventDefault()
     setError('')
+
+    const idsMunicipios = ubicaciones
+      .map(u => u.municipioId)
+      .filter(id => id !== '')
+
+    if (idsMunicipios.length === 0) {
+      setError('Debes seleccionar al menos una ubicacion')
+      return
+    }
+
+    const datosCompletos = { ...formData, ubicaciones: idsMunicipios }
 
     fetch('http://localhost:3000/api/expertos/' + expertoId, {
       method: 'PUT',
@@ -57,7 +130,7 @@ function PanelExperto() {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token
       },
-      body: JSON.stringify(formData)
+      body: JSON.stringify(datosCompletos)
     })
       .then(async (res) => {
         const data = await res.json()
@@ -66,8 +139,8 @@ function PanelExperto() {
         }
         return data
       })
-      .then((data) => {
-        setExperto(data)
+      .then(() => {
+        cargarExperto()
         setEditando(false)
       })
       .catch((err) => {
@@ -136,12 +209,14 @@ function PanelExperto() {
             <div>
               <h3 className="text-2xl font-bold">{experto.nombre}</h3>
               <p>Categoria: {experto.categoria}</p>
-              <p>Ubicacion: {experto.ubicacion}</p>
+              <p>
+                Ubicaciones: {experto.ubicaciones && experto.ubicaciones.map(u => u.nombre).join(', ')}
+              </p>
               <p>Plan: {experto.plan}</p>
 
               <div className="flex gap-3 mt-4">
                 <button
-                  onClick={() => setEditando(true)}
+                  onClick={iniciarEdicion}
                   className="px-4 py-2 bg-[#2C3E50] text-white rounded"
                 >
                   Editar perfil
@@ -195,15 +270,74 @@ function PanelExperto() {
             </div>
 
             <div>
-              <label className="block mb-1">Ubicacion</label>
-              <input
-                type="text"
-                name="ubicacion"
-                value={formData.ubicacion}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-                required
-              />
+              <label className="block mb-2">Modalidad de atencion</label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="atiendePresencial"
+                    checked={formData.atiendePresencial}
+                    onChange={handleChange}
+                  />
+                  Presencial
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="atiendeVirtual"
+                    checked={formData.atiendeVirtual}
+                    onChange={handleChange}
+                  />
+                  Virtual
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label className="block mb-1">Ciudades donde atiendes</label>
+              {ubicaciones.map((ubicacion, index) => (
+                <div key={index} className="flex gap-2 mb-2">
+                  <select
+                    value={ubicacion.departamentoId}
+                    onChange={(e) => handleDepartamentoChange(index, e.target.value)}
+                    className="w-1/2 p-2 border rounded"
+                  >
+                    <option value="">Departamento</option>
+                    {departamentos.map((depto) => (
+                      <option key={depto._id} value={depto._id}>{depto.nombre}</option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={ubicacion.municipioId}
+                    onChange={(e) => handleMunicipioChange(index, e.target.value)}
+                    className="w-1/2 p-2 border rounded"
+                    disabled={!ubicacion.departamentoId}
+                  >
+                    <option value="">Municipio</option>
+                    {(municipiosPorDepartamento[ubicacion.departamentoId] || []).map((muni) => (
+                      <option key={muni._id} value={muni._id}>{muni.nombre}</option>
+                    ))}
+                  </select>
+
+                  {ubicaciones.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => quitarUbicacion(index)}
+                      className="px-3 bg-gray-300 rounded"
+                    >
+                      Quitar
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={agregarUbicacion}
+                className="text-[#2C3E50] underline text-sm"
+              >
+                + Agregar otra ciudad
+              </button>
             </div>
 
             <div>
