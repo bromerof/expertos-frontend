@@ -104,29 +104,65 @@ function PanelAdmin() {
         ) : pendientes.length === 0 ? (
           <p>No hay expertos pendientes de aprobacion.</p>
         ) : (
-          <div className="flex flex-col gap-3 max-w-3xl">
+          <div className="flex flex-col gap-4 max-w-3xl">
             {pendientes.map((experto) => (
               <div
                 key={experto._id}
-                className="bg-white border border-gray-300 rounded p-4 flex justify-between items-center"
+                className="bg-white border border-gray-300 rounded p-4"
               >
-                <div>
-                  <p className="font-bold">{experto.nombre}</p>
-                  <p className="text-gray-500">{experto.categoria}</p>
+                <div className="flex justify-between items-start">
+                  <div>
+                    <p className="font-bold">{experto.nombre}</p>
+                    <p className="text-gray-500">{experto.categoria}</p>
+                    <p className="text-sm text-gray-600 mt-1">
+                      {experto.tipoDocumento}: {experto.numeroDocumento}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleAprobar(experto._id)}
+                      className="px-4 py-2 bg-[#27AE60] text-white rounded"
+                    >
+                      Aprobar
+                    </button>
+                    <button
+                      onClick={() => handleSuspender(experto._id)}
+                      className="px-4 py-2 bg-[#E74C3C] text-white rounded"
+                    >
+                      Suspender
+                    </button>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleAprobar(experto._id)}
-                    className="px-4 py-2 bg-[#27AE60] text-white rounded"
-                  >
-                    Aprobar
-                  </button>
-                  <button
-                    onClick={() => handleSuspender(experto._id)}
-                    className="px-4 py-2 bg-[#E74C3C] text-white rounded"
-                  >
-                    Suspender
-                  </button>
+
+                <div className="mt-3 pt-3 border-t border-gray-200">
+                  <p className="text-sm font-bold mb-2">Documento de identidad:</p>
+                  <div className="flex gap-4">
+                                        {experto.fotoDocumentoFrente ? (
+                      <a href={experto.fotoDocumentoFrente} target="_blank" rel="noopener noreferrer">
+                        <img
+                          src={experto.fotoDocumentoFrente}
+                          alt="Frente del documento"
+                          className="w-32 h-20 object-cover rounded border"
+                        />
+                        <p className="text-xs text-center mt-1 text-[#2C3E50] underline">Ver frente</p>
+                      </a>
+                    ) : (
+                      <p className="text-red-600 text-sm">Frente no subido</p>
+                    )}
+
+                                       {experto.fotoDocumentoReverso ? (
+                      <a href={experto.fotoDocumentoReverso} target="_blank" rel="noopener noreferrer">
+                        <img
+                          src={experto.fotoDocumentoReverso}
+                          alt="Reverso del documento"
+                          className="w-32 h-20 object-cover rounded border"
+                        />
+                        <p className="text-xs text-center mt-1 text-[#2C3E50] underline">Ver reverso</p>
+                      </a>
+                    ) : (
+                      <p className="text-red-600 text-sm">Reverso no subido</p>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
