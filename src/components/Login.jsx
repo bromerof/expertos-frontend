@@ -69,9 +69,9 @@ function Login() {
             />
           </div>
 
-          <button
+                    <button
             type="submit"
-            className="mt-2 px-6 py-3 bg-[#2C3E50] text-white rounded font-bold"
+            className="mt-2 px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f]"
           >
             Iniciar sesion
           </button>

@@ -284,7 +284,7 @@ function RegistroExperto() {
                   <button
                     type="button"
                     onClick={() => quitarUbicacion(index)}
-                    className="px-3 bg-gray-300 rounded"
+                    className="px-3 bg-gray-300 rounded cursor-pointer hover:bg-gray-400"
                   >
                     Quitar
                   </button>
@@ -294,7 +294,7 @@ function RegistroExperto() {
             <button
               type="button"
               onClick={agregarUbicacion}
-              className="text-[#2C3E50] underline text-sm"
+              className="text-[#2C3E50] underline text-sm cursor-pointer hover:text-[#1a252f]"
             >
               + Agregar otra ciudad
             </button>
@@ -375,7 +375,7 @@ function RegistroExperto() {
 
           <button
             type="submit"
-            className="mt-2 px-6 py-3 bg-[#2C3E50] text-white rounded font-bold"
+            className="mt-2 px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f]"
           >
             Registrarse
           </button>

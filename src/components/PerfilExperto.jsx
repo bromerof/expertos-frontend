@@ -46,7 +46,7 @@ const handleContactar = () => {
 
           <button
   onClick={handleContactar}
-  className="mt-4 px-6 py-3 bg-[#25D366] text-white rounded font-bold"
+  className="mt-4 px-6 py-3 bg-[#25D366] text-white rounded font-bold cursor-pointer hover:bg-[#1ebe57]"
 >
   Contactar por WhatsApp
 </button>

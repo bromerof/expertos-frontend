@@ -70,7 +70,7 @@ function Home() {
           />
           <button
             onClick={handleBuscar}
-            className="px-4 py-2 bg-[#2C3E50] text-white rounded"
+            className="px-4 py-2 bg-[#2C3E50] text-white rounded cursor-pointer hover:bg-[#1a252f]"
           >
             Buscar
           </button>
@@ -102,14 +102,13 @@ function Home() {
 
           <button
             onClick={handleBuscar}
-            className="px-4 py-2 border rounded"
+            className="px-4 py-2 border rounded cursor-pointer hover:bg-gray-100"
           >
             Filtrar
           </button>
-
           <button
             onClick={handleLimpiar}
-            className="px-4 py-2 text-[#2C3E50] underline"
+            className="px-4 py-2 text-[#2C3E50] underline cursor-pointer hover:text-[#1a252f]"
           >
             Limpiar filtros
           </button>
@@ -123,12 +122,12 @@ function Home() {
               <Link
                 key={experto._id}
                 to={'/experto/' + experto._id}
-                className="bg-white p-4 rounded shadow w-64 block hover:shadow-lg transition"
+                className="bg-white p-4 rounded shadow w-64 block hover:shadow-lg transition cursor-pointer"
               >
                 <div className="w-16 h-16 rounded-full bg-gray-300 mb-2"></div>
                 <p className="font-bold">{experto.nombre}</p>
                 <p className="text-gray-500">{experto.profesion && experto.profesion.nombre}</p>
-                <button className="mt-2 px-3 py-1 bg-[#2C3E50] text-white rounded">
+                <button className="mt-2 px-3 py-1 bg-[#2C3E50] text-white rounded cursor-pointer hover:bg-[#1a252f]">
                   Contactar
                 </button>
               </Link>

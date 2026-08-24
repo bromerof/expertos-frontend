@@ -351,7 +351,7 @@ function PanelExperto() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-[#2C3E50] p-4 flex justify-between items-center">
         <h1 className="text-white text-2xl font-bold">EXPERTOS</h1>
-        <button onClick={handleLogout} className="text-white underline">
+        <button onClick={handleLogout} className="text-white underline cursor-pointer hover:text-gray-300">
           Cerrar sesion
         </button>
       </header>
@@ -373,7 +373,7 @@ function PanelExperto() {
                   Sin foto de perfil
                 </div>
               )}
-              <label className="text-sm text-[#2C3E50] underline cursor-pointer">
+              <label className="text-sm text-[#2C3E50] underline cursor-pointer hover:text-[#1a252f]">
                 {experto.foto ? 'Cambiar foto' : 'Subir foto de perfil'}
                 <input type="file" accept="image/*" onChange={handleSubirFotoPerfil} className="hidden" />
               </label>
@@ -397,7 +397,7 @@ function PanelExperto() {
                   ) : (
                     <p className="text-red-600 text-sm">Falta subir el frente del documento</p>
                   )}
-                  <label className="text-sm text-[#2C3E50] underline cursor-pointer">
+                  <label className="text-sm text-[#2C3E50] underline cursor-pointer hover:text-[#1a252f]">
                     {experto.fotoDocumentoFrente ? 'Cambiar foto del frente' : 'Subir foto del frente'}
                     <input type="file" accept="image/png, image/jpeg" onChange={handleSubirFotoDocumentoFrente} className="hidden" />
                   </label>
@@ -409,7 +409,7 @@ function PanelExperto() {
                   ) : (
                     <p className="text-red-600 text-sm">Falta subir el reverso del documento</p>
                   )}
-                  <label className="text-sm text-[#2C3E50] underline cursor-pointer">
+                  <label className="text-sm text-[#2C3E50] underline cursor-pointer hover:text-[#1a252f]">
                     {experto.fotoDocumentoReverso ? 'Cambiar foto del reverso' : 'Subir foto del reverso'}
                     <input type="file" accept="image/png, image/jpeg" onChange={handleSubirFotoDocumentoReverso} className="hidden" />
                   </label>
@@ -419,13 +419,13 @@ function PanelExperto() {
               <div className="flex gap-3 mt-4">
                 <button
                   onClick={iniciarEdicion}
-                  className="px-4 py-2 bg-[#2C3E50] text-white rounded"
+                  className="px-4 py-2 bg-[#2C3E50] text-white rounded cursor-pointer hover:bg-[#1a252f]"
                 >
                   Editar perfil
                 </button>
                 <button
                   onClick={handleEliminar}
-                  className="px-4 py-2 bg-[#E74C3C] text-white rounded"
+                  className="px-4 py-2 bg-[#E74C3C] text-white rounded cursor-pointer hover:bg-[#c0392b]"
                 >
                   Eliminar perfil
                 </button>
@@ -540,7 +540,7 @@ function PanelExperto() {
                     <button
                       type="button"
                       onClick={() => quitarUbicacion(index)}
-                      className="px-3 bg-gray-300 rounded"
+                      className="px-3 bg-gray-300 rounded cursor-pointer hover:bg-gray-400"
                     >
                       Quitar
                     </button>
@@ -550,7 +550,7 @@ function PanelExperto() {
               <button
                 type="button"
                 onClick={agregarUbicacion}
-                className="text-[#2C3E50] underline text-sm"
+                className="text-[#2C3E50] underline text-sm cursor-pointer hover:text-[#1a252f]"
               >
                 + Agregar otra ciudad
               </button>
@@ -582,14 +582,14 @@ function PanelExperto() {
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="px-6 py-3 bg-[#2C3E50] text-white rounded font-bold"
+                className="px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f]"
               >
                 Guardar cambios
               </button>
               <button
                 type="button"
                 onClick={() => setEditando(false)}
-                className="px-6 py-3 bg-gray-300 rounded font-bold"
+                className="px-6 py-3 bg-gray-300 rounded font-bold cursor-pointer hover:bg-gray-400"
               >
                 Cancelar
               </button>
