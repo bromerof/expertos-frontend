@@ -113,7 +113,7 @@ function PanelAdmin() {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="font-bold">{experto.nombre}</p>
-                    <p className="text-gray-500">{experto.categoria}</p>
+                    <p className="text-gray-500">{experto.profesion && experto.profesion.nombre}</p>
                     <p className="text-sm text-gray-600 mt-1">
                       {experto.tipoDocumento}: {experto.numeroDocumento}
                     </p>

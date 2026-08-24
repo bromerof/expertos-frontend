@@ -5,7 +5,6 @@ function RegistroExperto() {
   const navigate = useNavigate()
    const [formData, setFormData] = useState({
     nombre: '',
-    categoria: '',
     descripcion: '',
     whatsapp: '',
     correo: '',
@@ -23,6 +22,12 @@ function RegistroExperto() {
 
   // Cada fila de ubicacion: { departamentoId, municipioId }
   const [ubicaciones, setUbicaciones] = useState([{ departamentoId: '', municipioId: '' }])
+
+  const [categorias, setCategorias] = useState([])
+  const [profesionesPorCategoria, setProfesionesPorCategoria] = useState({})
+  const [categoriaId, setCategoriaId] = useState('')
+  const [profesionId, setProfesionId] = useState('')
+
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -30,6 +35,11 @@ function RegistroExperto() {
       .then(res => res.json())
       .then(data => setDepartamentos(data))
       .catch(err => console.error('Error al cargar departamentos:', err))
+
+    fetch('http://localhost:3000/api/categorias')
+      .then(res => res.json())
+      .then(data => setCategorias(data))
+      .catch(err => console.error('Error al cargar categorias:', err))
   }, [])
 
   const cargarMunicipios = (departamentoId) => {
@@ -42,6 +52,18 @@ function RegistroExperto() {
         setMunicipiosPorDepartamento((prev) => ({ ...prev, [departamentoId]: data }))
       })
       .catch(err => console.error('Error al cargar municipios:', err))
+  }
+
+  const cargarProfesiones = (categoriaId) => {
+    if (profesionesPorCategoria[categoriaId]) {
+      return
+    }
+    fetch('http://localhost:3000/api/profesiones?categoria=' + categoriaId)
+      .then(res => res.json())
+      .then(data => {
+        setProfesionesPorCategoria((prev) => ({ ...prev, [categoriaId]: data }))
+      })
+      .catch(err => console.error('Error al cargar profesiones:', err))
   }
 
   const handleChange = (e) => {
@@ -73,11 +95,28 @@ function RegistroExperto() {
     setUbicaciones(nuevas)
   }
 
+  const handleCategoriaChange = (nuevaCategoriaId) => {
+    setCategoriaId(nuevaCategoriaId)
+    setProfesionId('')
+    if (nuevaCategoriaId) {
+      cargarProfesiones(nuevaCategoriaId)
+    }
+  }
+
+  const handleProfesionChange = (nuevaProfesionId) => {
+    setProfesionId(nuevaProfesionId)
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     setError('')
         const confirmar = window.confirm('Revisa que toda tu informacion este correcta (especialmente tu nombre) antes de continuar. Deseas registrarte con estos datos?')
     if (!confirmar) return
+
+    if (!profesionId) {
+      setError('Debes seleccionar una categoria y una profesion')
+      return
+    }
 
         const idsMunicipios = ubicaciones
       .map(u => u.municipioId)
@@ -88,7 +127,7 @@ function RegistroExperto() {
       return
     }
 
-    const datosCompletos = { ...formData, ubicaciones: idsMunicipios }
+    const datosCompletos = { ...formData, ubicaciones: idsMunicipios, profesion: profesionId }
 
     fetch('http://localhost:3000/api/auth/registro', {
       method: 'POST',
@@ -139,14 +178,31 @@ function RegistroExperto() {
 
           <div>
             <label className="block mb-1">Categoria</label>
-            <input
-              type="text"
-              name="categoria"
-              value={formData.categoria}
-              onChange={handleChange}
+            <select
+              value={categoriaId}
+              onChange={(e) => handleCategoriaChange(e.target.value)}
               className="w-full p-2 border rounded"
-              required
-            />
+            >
+              <option value="">Selecciona una categoria</option>
+              {categorias.map((cat) => (
+                <option key={cat._id} value={cat._id}>{cat.nombre}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block mb-1">Profesion especifica</label>
+            <select
+              value={profesionId}
+              onChange={(e) => handleProfesionChange(e.target.value)}
+              className="w-full p-2 border rounded"
+              disabled={!categoriaId}
+            >
+              <option value="">Selecciona una profesion</option>
+              {(profesionesPorCategoria[categoriaId] || []).map((prof) => (
+                <option key={prof._id} value={prof._id}>{prof.nombre}</option>
+              ))}
+            </select>
           </div>
 
           <div>

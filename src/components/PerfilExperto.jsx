@@ -37,7 +37,8 @@ const handleContactar = () => {
         {/* Info */}
         <div>
           <h2 className="text-2xl font-bold">{experto.nombre}</h2>
-          <p>Categoría: {experto.categoria}</p>
+          <p>Categoría: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>
+          <p>Profesión: {experto.profesion && experto.profesion.nombre}</p>
          <p>Ubicaciones: {experto.ubicaciones && experto.ubicaciones.map(u => u.nombre).join(', ')}</p>
           <p>Años de experiencia: {experto.anosExperiencia}</p>
 

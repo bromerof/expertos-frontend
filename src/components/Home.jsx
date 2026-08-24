@@ -127,7 +127,7 @@ function Home() {
               >
                 <div className="w-16 h-16 rounded-full bg-gray-300 mb-2"></div>
                 <p className="font-bold">{experto.nombre}</p>
-                <p className="text-gray-500">{experto.categoria}</p>
+                <p className="text-gray-500">{experto.profesion && experto.profesion.nombre}</p>
                 <button className="mt-2 px-3 py-1 bg-[#2C3E50] text-white rounded">
                   Contactar
                 </button>

@@ -8,7 +8,6 @@ function PanelExperto() {
   const [editando, setEditando] = useState(false)
   const [formData, setFormData] = useState({
     nombre: '',
-    categoria: '',
     descripcion: '',
     whatsapp: '',
     anosExperiencia: '',
@@ -18,6 +17,11 @@ function PanelExperto() {
   const [ubicaciones, setUbicaciones] = useState([{ departamentoId: '', municipioId: '' }])
   const [departamentos, setDepartamentos] = useState([])
   const [municipiosPorDepartamento, setMunicipiosPorDepartamento] = useState({})
+
+  const [categorias, setCategorias] = useState([])
+  const [profesionesPorCategoria, setProfesionesPorCategoria] = useState({})
+  const [categoriaId, setCategoriaId] = useState('')
+  const [profesionId, setProfesionId] = useState('')
 
   const expertoId = localStorage.getItem('expertoId')
   const token = localStorage.getItem('token')
@@ -32,6 +36,11 @@ function PanelExperto() {
       .then(res => res.json())
       .then(data => setDepartamentos(data))
       .catch(err => console.error('Error al cargar departamentos:', err))
+
+    fetch('http://localhost:3000/api/categorias')
+      .then(res => res.json())
+      .then(data => setCategorias(data))
+      .catch(err => console.error('Error al cargar categorias:', err))
   }, [expertoId, token, navigate])
 
   const cargarExperto = () => {
@@ -41,7 +50,6 @@ function PanelExperto() {
         setExperto(data)
         setFormData({
           nombre: data.nombre || '',
-          categoria: data.categoria || '',
           descripcion: data.descripcion || '',
           whatsapp: data.whatsapp || '',
           anosExperiencia: data.anosExperiencia || '',
@@ -64,6 +72,18 @@ function PanelExperto() {
       .catch(err => console.error('Error al cargar municipios:', err))
   }
 
+  const cargarProfesiones = (categoriaId) => {
+    if (profesionesPorCategoria[categoriaId]) {
+      return
+    }
+    fetch('http://localhost:3000/api/profesiones?categoria=' + categoriaId)
+      .then(res => res.json())
+      .then(data => {
+        setProfesionesPorCategoria((prev) => ({ ...prev, [categoriaId]: data }))
+      })
+      .catch(err => console.error('Error al cargar profesiones:', err))
+  }
+
   const iniciarEdicion = () => {
     if (experto.ubicaciones && experto.ubicaciones.length > 0) {
       const ubicacionesIniciales = experto.ubicaciones.map((u) => {
@@ -77,6 +97,18 @@ function PanelExperto() {
     } else {
       setUbicaciones([{ departamentoId: '', municipioId: '' }])
     }
+
+    // Precargamos la categoria y profesion actuales del experto
+    if (experto.profesion && experto.profesion.categoria) {
+      const categoriaActualId = experto.profesion.categoria._id
+      setCategoriaId(categoriaActualId)
+      setProfesionId(experto.profesion._id)
+      cargarProfesiones(categoriaActualId)
+    } else {
+      setCategoriaId('')
+      setProfesionId('')
+    }
+
     setEditando(true)
   }
 
@@ -109,9 +141,26 @@ function PanelExperto() {
     setUbicaciones(nuevas)
   }
 
+  const handleCategoriaChange = (nuevaCategoriaId) => {
+    setCategoriaId(nuevaCategoriaId)
+    setProfesionId('')
+    if (nuevaCategoriaId) {
+      cargarProfesiones(nuevaCategoriaId)
+    }
+  }
+
+  const handleProfesionChange = (nuevaProfesionId) => {
+    setProfesionId(nuevaProfesionId)
+  }
+
   const handleGuardar = (e) => {
     e.preventDefault()
     setError('')
+
+    if (!profesionId) {
+      setError('Debes seleccionar una categoria y una profesion')
+      return
+    }
 
     const idsMunicipios = ubicaciones
       .map(u => u.municipioId)
@@ -122,7 +171,7 @@ function PanelExperto() {
       return
     }
 
-    const datosCompletos = { ...formData, ubicaciones: idsMunicipios }
+    const datosCompletos = { ...formData, ubicaciones: idsMunicipios, profesion: profesionId }
 
     fetch('http://localhost:3000/api/expertos/' + expertoId, {
       method: 'PUT',
@@ -331,7 +380,8 @@ function PanelExperto() {
             </div>
             <div>
               <h3 className="text-2xl font-bold">{experto.nombre}</h3>
-              <p>Categoria: {experto.categoria}</p>
+              <p>Categoria: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>
+              <p>Profesion: {experto.profesion && experto.profesion.nombre}</p>
               <p>
                 Ubicaciones: {experto.ubicaciones && experto.ubicaciones.map(u => u.nombre).join(', ')}
               </p>
@@ -398,14 +448,31 @@ function PanelExperto() {
 
             <div>
               <label className="block mb-1">Categoria</label>
-              <input
-                type="text"
-                name="categoria"
-                value={formData.categoria}
-                onChange={handleChange}
+              <select
+                value={categoriaId}
+                onChange={(e) => handleCategoriaChange(e.target.value)}
                 className="w-full p-2 border rounded"
-                required
-              />
+              >
+                <option value="">Selecciona una categoria</option>
+                {categorias.map((cat) => (
+                  <option key={cat._id} value={cat._id}>{cat.nombre}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block mb-1">Profesion especifica</label>
+              <select
+                value={profesionId}
+                onChange={(e) => handleProfesionChange(e.target.value)}
+                className="w-full p-2 border rounded"
+                disabled={!categoriaId}
+              >
+                <option value="">Selecciona una profesion</option>
+                {(profesionesPorCategoria[categoriaId] || []).map((prof) => (
+                  <option key={prof._id} value={prof._id}>{prof.nombre}</option>
+                ))}
+              </select>
             </div>
 
             <div>
