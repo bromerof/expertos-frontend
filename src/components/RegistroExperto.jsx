@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Header from './Header'
 
 function RegistroExperto() {
   const navigate = useNavigate()
@@ -152,9 +153,7 @@ function RegistroExperto() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-[#2C3E50] p-4">
-        <h1 className="text-white text-2xl font-bold">EXPERTOS</h1>
-      </header>
+            <Header />
 
       <div className="p-6 max-w-lg">
         <h2 className="text-xl font-bold mb-4">Registro de experto</h2>

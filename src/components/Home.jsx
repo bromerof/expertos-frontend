@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import Header from './Header'
 
 function Home() {
   const [expertos, setExpertos] = useState([])
@@ -54,9 +55,7 @@ function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-[#2C3E50] p-4">
-        <h1 className="text-white text-2xl font-bold">EXPERTOS</h1>
-      </header>
+      <Header />
 
       <div className="p-6">
         <div className="flex gap-2 max-w-2xl">

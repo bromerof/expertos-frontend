@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Header from './Header'
 
 function Login() {
   const navigate = useNavigate()
@@ -35,9 +36,7 @@ function Login() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-[#2C3E50] p-4">
-        <h1 className="text-white text-2xl font-bold">EXPERTOS</h1>
-      </header>
+            <Header />
 
       <div className="p-6 max-w-md">
         <h2 className="text-xl font-bold mb-4">Iniciar sesion</h2>

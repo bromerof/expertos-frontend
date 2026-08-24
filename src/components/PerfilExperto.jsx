@@ -25,10 +25,7 @@ const handleContactar = () => {
 }
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-[#2C3E50] p-4">
-        <h1 className="text-white text-2xl font-bold">EXPERTOS</h1>
-      </header>
+           <Header />
 
       <div className="p-6 flex gap-6">
         {/* Foto */}

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Header from './Header'
 
 function PanelExperto() {
   const navigate = useNavigate()
@@ -349,12 +350,11 @@ function PanelExperto() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-[#2C3E50] p-4 flex justify-between items-center">
-        <h1 className="text-white text-2xl font-bold">EXPERTOS</h1>
+           <Header>
         <button onClick={handleLogout} className="text-white underline cursor-pointer hover:text-gray-300">
           Cerrar sesion
         </button>
-      </header>
+      </Header>
 
       <div className="p-6">
         <h2 className="text-xl font-bold mb-4">Mi panel</h2>
