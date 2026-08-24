@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 function RegistroExperto() {
   const navigate = useNavigate()
-  const [formData, setFormData] = useState({
+   const [formData, setFormData] = useState({
     nombre: '',
     categoria: '',
     descripcion: '',
@@ -11,8 +11,11 @@ function RegistroExperto() {
     correo: '',
     contraseña: '',
     anosExperiencia: '',
-    atiendePresencial: true,
-    atiendeVirtual: false
+        atiendePresencial: true,
+    atiendeVirtual: false,
+    coberturaVirtualNacional: false,
+    tipoDocumento: 'CC',
+    numeroDocumento: ''
   })
 
   const [departamentos, setDepartamentos] = useState([])
@@ -76,12 +79,12 @@ function RegistroExperto() {
         const confirmar = window.confirm('Revisa que toda tu informacion este correcta (especialmente tu nombre) antes de continuar. Deseas registrarte con estos datos?')
     if (!confirmar) return
 
-    const idsMunicipios = ubicaciones
+        const idsMunicipios = ubicaciones
       .map(u => u.municipioId)
       .filter(id => id !== '')
 
-    if (idsMunicipios.length === 0) {
-      setError('Debes seleccionar al menos una ubicacion')
+    if (idsMunicipios.length === 0 && !formData.coberturaVirtualNacional) {
+      setError('Debes seleccionar al menos una ubicacion, o marcar cobertura nacional virtual')
       return
     }
 
@@ -180,6 +183,20 @@ function RegistroExperto() {
             </div>
           </div>
 
+          {formData.atiendeVirtual && (
+            <div>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  name="coberturaVirtualNacional"
+                  checked={formData.coberturaVirtualNacional}
+                  onChange={handleChange}
+                />
+                Mi servicio virtual cubre toda Colombia
+              </label>
+            </div>
+          )}
+
           <div>
             <label className="block mb-1">Ciudades donde atiendes</label>
             {ubicaciones.map((ubicacion, index) => (
@@ -225,6 +242,32 @@ function RegistroExperto() {
             >
               + Agregar otra ciudad
             </button>
+          </div>
+
+          <div>
+            <label className="block mb-1">Tipo de documento</label>
+            <select
+              name="tipoDocumento"
+              value={formData.tipoDocumento}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            >
+              <option value="CC">Cedula de Ciudadania</option>
+              <option value="CE">Cedula de Extranjeria</option>
+              <option value="Pasaporte">Pasaporte</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block mb-1">Numero de documento</label>
+            <input
+              type="text"
+              name="numeroDocumento"
+              value={formData.numeroDocumento}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              required
+            />
           </div>
 
           <div>

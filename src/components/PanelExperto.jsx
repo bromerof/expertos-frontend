@@ -182,6 +182,118 @@ function PanelExperto() {
     navigate('/login')
   }
 
+    const handleSubirFotoPerfil = (e) => {
+    const archivo = e.target.files[0]
+    if (!archivo) return
+
+    const datosFormulario = new FormData()
+    datosFormulario.append('foto', archivo)
+    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(archivo.type)) {
+      setError('Solo se permiten archivos JPG o PNG')
+      return
+    }
+    if (archivo.size > 5 * 1024 * 1024) {
+      setError('El archivo no debe superar los 5MB')
+      return
+    }
+    fetch('http://localhost:3000/api/expertos/' + expertoId + '/foto', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      },
+      body: datosFormulario
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al subir la foto')
+        }
+        return data
+      })
+      .then(() => {
+        cargarExperto()
+      })
+      .catch((err) => {
+        setError(err.message)
+      })
+  }
+
+    const handleSubirFotoDocumentoFrente = (e) => {
+    const archivo = e.target.files[0]
+    if (!archivo) return
+
+    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(archivo.type)) {
+      setError('Solo se permiten archivos JPG o PNG')
+      return
+    }
+    if (archivo.size > 5 * 1024 * 1024) {
+      setError('El archivo no debe superar los 5MB')
+      return
+    }
+
+    const datosFormulario = new FormData()
+    datosFormulario.append('fotoDocumentoFrente', archivo)
+
+    fetch('http://localhost:3000/api/expertos/' + expertoId + '/foto-documento-frente', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      },
+      body: datosFormulario
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al subir la foto')
+        }
+        return data
+      })
+      .then(() => {
+        cargarExperto()
+      })
+      .catch((err) => {
+        setError(err.message)
+      })
+  }
+
+  const handleSubirFotoDocumentoReverso = (e) => {
+    const archivo = e.target.files[0]
+    if (!archivo) return
+
+    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(archivo.type)) {
+      setError('Solo se permiten archivos JPG o PNG')
+      return
+    }
+    if (archivo.size > 5 * 1024 * 1024) {
+      setError('El archivo no debe superar los 5MB')
+      return
+    }
+
+    const datosFormulario = new FormData()
+    datosFormulario.append('fotoDocumentoReverso', archivo)
+
+    fetch('http://localhost:3000/api/expertos/' + expertoId + '/foto-documento-reverso', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token
+      },
+      body: datosFormulario
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al subir la foto')
+        }
+        return data
+      })
+      .then(() => {
+        cargarExperto()
+      })
+      .catch((err) => {
+        setError(err.message)
+      })
+  }
+
   if (!experto) {
     return <p className="p-6">Cargando...</p>
   }
@@ -204,8 +316,19 @@ function PanelExperto() {
 
         {!editando ? (
           <div className="flex gap-6">
-            <div className="w-32 h-32 rounded-full bg-gray-300 flex-shrink-0"></div>
-
+                       <div className="flex flex-col items-center gap-2">
+              {experto.foto ? (
+                <img src={experto.foto} alt="Foto de perfil" className="w-32 h-32 rounded-full object-cover" />
+              ) : (
+                <div className="w-32 h-32 rounded-full bg-gray-300 flex items-center justify-center text-xs text-center p-2">
+                  Sin foto de perfil
+                </div>
+              )}
+              <label className="text-sm text-[#2C3E50] underline cursor-pointer">
+                {experto.foto ? 'Cambiar foto' : 'Subir foto de perfil'}
+                <input type="file" accept="image/*" onChange={handleSubirFotoPerfil} className="hidden" />
+              </label>
+            </div>
             <div>
               <h3 className="text-2xl font-bold">{experto.nombre}</h3>
               <p>Categoria: {experto.categoria}</p>
@@ -214,15 +337,41 @@ function PanelExperto() {
               </p>
               <p>Plan: {experto.plan}</p>
 
+                             <div className="mt-3">
+                <p className="font-bold text-sm">Documento de identidad:</p>
+                <p className="text-xs text-gray-500 mb-1">Formatos permitidos: JPG, PNG. Tamano maximo: 5MB</p>
+
+                <div className="mb-2">
+                  {experto.fotoDocumentoFrente ? (
+                    <p className="text-green-700 text-sm">Frente: subido correctamente</p>
+                  ) : (
+                    <p className="text-red-600 text-sm">Falta subir el frente del documento</p>
+                  )}
+                  <label className="text-sm text-[#2C3E50] underline cursor-pointer">
+                    {experto.fotoDocumentoFrente ? 'Cambiar foto del frente' : 'Subir foto del frente'}
+                    <input type="file" accept="image/png, image/jpeg" onChange={handleSubirFotoDocumentoFrente} className="hidden" />
+                  </label>
+                </div>
+
+                <div>
+                  {experto.fotoDocumentoReverso ? (
+                    <p className="text-green-700 text-sm">Reverso: subido correctamente</p>
+                  ) : (
+                    <p className="text-red-600 text-sm">Falta subir el reverso del documento</p>
+                  )}
+                  <label className="text-sm text-[#2C3E50] underline cursor-pointer">
+                    {experto.fotoDocumentoReverso ? 'Cambiar foto del reverso' : 'Subir foto del reverso'}
+                    <input type="file" accept="image/png, image/jpeg" onChange={handleSubirFotoDocumentoReverso} className="hidden" />
+                  </label>
+                </div>
+              </div>
+
               <div className="flex gap-3 mt-4">
                 <button
                   onClick={iniciarEdicion}
                   className="px-4 py-2 bg-[#2C3E50] text-white rounded"
                 >
                   Editar perfil
-                </button>
-                <button className="px-4 py-2 bg-[#2C3E50] text-white rounded">
-                  Cambiar foto
                 </button>
                 <button
                   onClick={handleEliminar}
