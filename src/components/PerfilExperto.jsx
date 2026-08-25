@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import Header from './Header'
 
 function PerfilExperto() {
   const { id } = useParams()
@@ -25,7 +26,7 @@ const handleContactar = () => {
 }
   return (
     <div className="min-h-screen bg-gray-50">
-           <Header />
+      <Header />
 
       <div className="p-6 flex gap-6">
         {/* Foto */}
@@ -36,7 +37,19 @@ const handleContactar = () => {
           <h2 className="text-2xl font-bold">{experto.nombre}</h2>
           <p>Categoría: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>
           <p>Profesión: {experto.profesion && experto.profesion.nombre}</p>
-         <p>Ubicaciones: {experto.ubicaciones && experto.ubicaciones.map(u => u.nombre).join(', ')}</p>
+
+          {experto.ubicaciones && experto.ubicaciones.length > 0 && (
+            <p>Ubicaciones: {experto.ubicaciones.map(u => u.nombre).join(', ')}</p>
+          )}
+
+          {experto.coberturaVirtualNacional && (
+            <p>Cobertura virtual: Todo Colombia</p>
+          )}
+
+          {(!experto.ubicaciones || experto.ubicaciones.length === 0) && !experto.coberturaVirtualNacional && (
+            <p>Ubicaciones: No especificadas</p>
+          )}
+
           <p>Años de experiencia: {experto.anosExperiencia}</p>
 
           <p className="mt-4 max-w-xl text-gray-700">{experto.descripcion}</p>

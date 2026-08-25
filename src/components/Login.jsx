@@ -6,16 +6,22 @@ function Login() {
   const navigate = useNavigate()
   const [correo, setCorreo] = useState('')
   const [contrasena, setContrasena] = useState('')
+  const [rolSeleccionado, setRolSeleccionado] = useState('')
   const [error, setError] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setError('')
 
+    const datosLogin = { correo: correo, contraseña: contrasena }
+    if (rolSeleccionado) {
+      datosLogin.rol = rolSeleccionado
+    }
+
     fetch('http://localhost:3000/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ correo: correo, contraseña: contrasena })
+      body: JSON.stringify(datosLogin)
     })
       .then(async (res) => {
         const data = await res.json()
@@ -24,10 +30,15 @@ function Login() {
         }
         return data
       })
-      .then((data) => {
+            .then((data) => {
         localStorage.setItem('token', data.token)
         localStorage.setItem('expertoId', data.experto.id)
-        navigate('/experto/' + data.experto.id)
+
+        if (data.experto.rol === 'cliente') {
+          navigate('/panel')
+        } else {
+          navigate('/experto/' + data.experto.id)
+        }
       })
       .catch((err) => {
         setError(err.message)
@@ -66,6 +77,21 @@ function Login() {
               className="w-full p-2 border rounded"
               required
             />
+          </div>
+
+          <div>
+            <label className="block mb-1">
+              ¿Tienes mas de una cuenta con este correo? Especifica cual (opcional)
+            </label>
+            <select
+              value={rolSeleccionado}
+              onChange={(e) => setRolSeleccionado(e.target.value)}
+              className="w-full p-2 border rounded"
+            >
+              
+              <option value="experto">Entrar como Experto</option>
+              <option value="cliente">Entrar como Cliente</option>
+            </select>
           </div>
 
                     <button

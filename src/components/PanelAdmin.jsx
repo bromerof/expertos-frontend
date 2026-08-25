@@ -259,7 +259,11 @@ function PanelAdmin() {
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="font-bold">{experto.nombre}</p>
-                    <p className="text-gray-500">{experto.profesion && experto.profesion.nombre}</p>
+                    {experto.rol === 'cliente' ? (
+                      <p className="text-gray-500 font-semibold">Cliente</p>
+                    ) : (
+                      <p className="text-gray-500">{experto.profesion && experto.profesion.nombre}</p>
+                    )}
                     <p className="text-sm text-gray-600 mt-1">
                       {experto.tipoDocumento}: {experto.numeroDocumento}
                     </p>
@@ -279,7 +283,7 @@ function PanelAdmin() {
                     </button>
                   </div>
                 </div>
-
+                {experto.rol !== 'cliente' && (
                 <div className="mt-3 pt-3 border-t border-gray-200">
                   <p className="text-sm font-bold mb-2">Documento de identidad:</p>
                   <div className="flex gap-4">
@@ -310,6 +314,7 @@ function PanelAdmin() {
                     )}
                   </div>
                 </div>
+              )}
               </div>
             ))}
           </div>
