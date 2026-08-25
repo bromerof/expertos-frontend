@@ -9,12 +9,14 @@ function PanelExperto() {
   const [editando, setEditando] = useState(false)
   const [formData, setFormData] = useState({
     nombre: '',
+    correo: '',
     descripcion: '',
     whatsapp: '',
     anosExperiencia: '',
     atiendePresencial: true,
     atiendeVirtual: false
   })
+
   const [ubicaciones, setUbicaciones] = useState([{ departamentoId: '', municipioId: '' }])
   const [departamentos, setDepartamentos] = useState([])
   const [municipiosPorDepartamento, setMunicipiosPorDepartamento] = useState({})
@@ -49,14 +51,15 @@ function PanelExperto() {
       .then(res => res.json())
       .then(data => {
         setExperto(data)
-        setFormData({
+               setFormData({
           nombre: data.nombre || '',
+          correo: data.correo || '',
           descripcion: data.descripcion || '',
           whatsapp: data.whatsapp || '',
           anosExperiencia: data.anosExperiencia || '',
           atiendePresencial: data.atiendePresencial ?? true,
           atiendeVirtual: data.atiendeVirtual ?? false
-        })
+        }) 
       })
       .catch(err => console.error('Error al cargar el perfil:', err))
   }
@@ -158,7 +161,7 @@ function PanelExperto() {
     e.preventDefault()
     setError('')
 
-    if (!profesionId) {
+    if (experto.rol !== 'cliente' && !profesionId) {
       setError('Debes seleccionar una categoria y una profesion')
       return
     }
@@ -172,7 +175,10 @@ function PanelExperto() {
       return
     }
 
-    const datosCompletos = { ...formData, ubicaciones: idsMunicipios, profesion: profesionId }
+    const datosCompletos = { ...formData, ubicaciones: idsMunicipios }
+    if (profesionId) {
+      datosCompletos.profesion = profesionId
+    }
 
     fetch('http://localhost:3000/api/expertos/' + expertoId, {
       method: 'PUT',
@@ -350,7 +356,7 @@ function PanelExperto() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-           <Header>
+      <Header>
         <button onClick={handleLogout} className="text-white underline cursor-pointer hover:text-gray-300">
           Cerrar sesion
         </button>
@@ -380,41 +386,49 @@ function PanelExperto() {
             </div>
             <div>
               <h3 className="text-2xl font-bold">{experto.nombre}</h3>
-              <p>Categoria: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>
-              <p>Profesion: {experto.profesion && experto.profesion.nombre}</p>
+              {experto.rol !== 'cliente' && (
+                <>
+                  <p>Categoria: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>
+                  <p>Profesion: {experto.profesion && experto.profesion.nombre}</p>
+                </>
+              )}
               <p>
                 Ubicaciones: {experto.ubicaciones && experto.ubicaciones.map(u => u.nombre).join(', ')}
               </p>
-              <p>Plan: {experto.plan}</p>
+              {experto.rol !== 'cliente' && (
+                <p>Plan: {experto.plan}</p>
+              )}
 
-                             <div className="mt-3">
-                <p className="font-bold text-sm">Documento de identidad:</p>
-                <p className="text-xs text-gray-500 mb-1">Formatos permitidos: JPG, PNG. Tamano maximo: 5MB</p>
+                             {experto.rol !== 'cliente' && (
+                <div className="mt-3">
+                  <p className="font-bold text-sm">Documento de identidad:</p>
+                  <p className="text-xs text-gray-500 mb-1">Formatos permitidos: JPG, PNG. Tamano maximo: 5MB</p>
 
-                <div className="mb-2">
-                  {experto.fotoDocumentoFrente ? (
-                    <p className="text-green-700 text-sm">Frente: subido correctamente</p>
-                  ) : (
-                    <p className="text-red-600 text-sm">Falta subir el frente del documento</p>
-                  )}
-                  <label className="text-sm text-[#2C3E50] underline cursor-pointer hover:text-[#1a252f]">
-                    {experto.fotoDocumentoFrente ? 'Cambiar foto del frente' : 'Subir foto del frente'}
-                    <input type="file" accept="image/png, image/jpeg" onChange={handleSubirFotoDocumentoFrente} className="hidden" />
-                  </label>
+                  <div className="mb-2">
+                    {experto.fotoDocumentoFrente ? (
+                      <p className="text-green-700 text-sm">Frente: subido correctamente</p>
+                    ) : (
+                      <p className="text-red-600 text-sm">Falta subir el frente del documento</p>
+                    )}
+                    <label className="text-sm text-[#2C3E50] underline cursor-pointer hover:text-[#1a252f]">
+                      {experto.fotoDocumentoFrente ? 'Cambiar foto del frente' : 'Subir foto del frente'}
+                      <input type="file" accept="image/png, image/jpeg" onChange={handleSubirFotoDocumentoFrente} className="hidden" />
+                    </label>
+                  </div>
+
+                  <div>
+                    {experto.fotoDocumentoReverso ? (
+                      <p className="text-green-700 text-sm">Reverso: subido correctamente</p>
+                    ) : (
+                      <p className="text-red-600 text-sm">Falta subir el reverso del documento</p>
+                    )}
+                    <label className="text-sm text-[#2C3E50] underline cursor-pointer hover:text-[#1a252f]">
+                      {experto.fotoDocumentoReverso ? 'Cambiar foto del reverso' : 'Subir foto del reverso'}
+                      <input type="file" accept="image/png, image/jpeg" onChange={handleSubirFotoDocumentoReverso} className="hidden" />
+                    </label>
+                  </div>
                 </div>
-
-                <div>
-                  {experto.fotoDocumentoReverso ? (
-                    <p className="text-green-700 text-sm">Reverso: subido correctamente</p>
-                  ) : (
-                    <p className="text-red-600 text-sm">Falta subir el reverso del documento</p>
-                  )}
-                  <label className="text-sm text-[#2C3E50] underline cursor-pointer hover:text-[#1a252f]">
-                    {experto.fotoDocumentoReverso ? 'Cambiar foto del reverso' : 'Subir foto del reverso'}
-                    <input type="file" accept="image/png, image/jpeg" onChange={handleSubirFotoDocumentoReverso} className="hidden" />
-                  </label>
-                </div>
-              </div>
+              )}
 
               <div className="flex gap-3 mt-4">
                 <button
@@ -445,45 +459,61 @@ function PanelExperto() {
                 required
               />
             </div>
-
             <div>
-              <label className="block mb-1">Categoria</label>
-              <select
-                value={categoriaId}
-                onChange={(e) => handleCategoriaChange(e.target.value)}
-                className="w-full p-2 border rounded"
-              >
-                <option value="">Selecciona una categoria</option>
-                {categorias.map((cat) => (
-                  <option key={cat._id} value={cat._id}>{cat.nombre}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block mb-1">Profesion especifica</label>
-              <select
-                value={profesionId}
-                onChange={(e) => handleProfesionChange(e.target.value)}
-                className="w-full p-2 border rounded"
-                disabled={!categoriaId}
-              >
-                <option value="">Selecciona una profesion</option>
-                {(profesionesPorCategoria[categoriaId] || []).map((prof) => (
-                  <option key={prof._id} value={prof._id}>{prof.nombre}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block mb-1">Descripcion</label>
-              <textarea
-                name="descripcion"
-                value={formData.descripcion}
+              <label className="block mb-1">Correo electronico</label>
+              <input
+                type="email"
+                name="correo"
+                value={formData.correo}
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
+                required
               />
             </div>
+            {experto.rol !== 'cliente' && (
+              <>
+                <div>
+                  <label className="block mb-1">Categoria</label>
+                  <select
+                    value={categoriaId}
+                    onChange={(e) => handleCategoriaChange(e.target.value)}
+                    className="w-full p-2 border rounded"
+                  >
+                    <option value="">Selecciona una categoria</option>
+                    {categorias.map((cat) => (
+                      <option key={cat._id} value={cat._id}>{cat.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block mb-1">Profesion especifica</label>
+                  <select
+                    value={profesionId}
+                    onChange={(e) => handleProfesionChange(e.target.value)}
+                    className="w-full p-2 border rounded"
+                    disabled={!categoriaId}
+                  >
+                    <option value="">Selecciona una profesion</option>
+                    {(profesionesPorCategoria[categoriaId] || []).map((prof) => (
+                      <option key={prof._id} value={prof._id}>{prof.nombre}</option>
+                    ))}
+                  </select>
+                </div>
+              </>
+            )}
+
+            {experto.rol !== 'cliente' && (
+              <div>
+                <label className="block mb-1">Descripcion</label>
+                <textarea
+                  name="descripcion"
+                  value={formData.descripcion}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+            )}
 
             <div>
               <label className="block mb-2">Modalidad de atencion</label>
@@ -568,16 +598,18 @@ function PanelExperto() {
               />
             </div>
 
-            <div>
-              <label className="block mb-1">Anos de experiencia</label>
-              <input
-                type="number"
-                name="anosExperiencia"
-                value={formData.anosExperiencia}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-              />
-            </div>
+            {experto.rol !== 'cliente' && (
+              <div>
+                <label className="block mb-1">Anos de experiencia</label>
+                <input
+                  type="number"
+                  name="anosExperiencia"
+                  value={formData.anosExperiencia}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+            )}
 
             <div className="flex gap-3">
               <button
