@@ -8,6 +8,17 @@ function PanelAdmin() {
   const [error, setError] = useState('')
   const [cargando, setCargando] = useState(true)
 
+  const [mostrarFormularioAdmin, setMostrarFormularioAdmin] = useState(false)
+  const [formDataAdmin, setFormDataAdmin] = useState({
+    nombre: '',
+    correo: '',
+    contraseña: '',
+    tipoDocumento: 'CC',
+    numeroDocumento: ''
+  })
+  const [errorAdmin, setErrorAdmin] = useState('')
+  const [mensajeExitoAdmin, setMensajeExitoAdmin] = useState('')
+
   const token = localStorage.getItem('token')
 
   useEffect(() => {
@@ -87,12 +98,148 @@ function PanelAdmin() {
       })
   }
 
+  const handleChangeAdmin = (e) => {
+    const { name, value } = e.target
+    setFormDataAdmin({ ...formDataAdmin, [name]: value })
+  }
+
+  const handleCrearAdmin = (e) => {
+    e.preventDefault()
+    setErrorAdmin('')
+    setMensajeExitoAdmin('')
+
+    fetch('http://localhost:3000/api/admin/crear-admin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify(formDataAdmin)
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al crear el administrador')
+        }
+        return data
+      })
+      .then((adminCreado) => {
+        setMensajeExitoAdmin('Administrador "' + adminCreado.nombre + '" creado correctamente.')
+        setFormDataAdmin({
+          nombre: '',
+          correo: '',
+          contraseña: '',
+          tipoDocumento: 'CC',
+          numeroDocumento: ''
+        })
+      })
+      .catch((err) => {
+        setErrorAdmin(err.message)
+      })
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
             <Header />
 
       <div className="p-6">
-        <h2 className="text-xl font-bold mb-4">Expertos pendientes de aprobacion</h2>
+        <div className="flex justify-between items-center mb-4 max-w-3xl">
+          <h2 className="text-xl font-bold">Expertos pendientes de aprobacion</h2>
+          <button
+            onClick={() => {
+              setMostrarFormularioAdmin(!mostrarFormularioAdmin)
+              setErrorAdmin('')
+              setMensajeExitoAdmin('')
+            }}
+            className="px-4 py-2 bg-[#2C3E50] text-white rounded cursor-pointer hover:bg-[#1a252f]"
+          >
+            {mostrarFormularioAdmin ? 'Cancelar' : '+ Crear administrador'}
+          </button>
+        </div>
+
+        {mostrarFormularioAdmin && (
+          <div className="bg-white border border-gray-300 rounded p-4 mb-6 max-w-md">
+            <h3 className="font-bold mb-3">Crear nuevo administrador</h3>
+
+            {errorAdmin && (
+              <p className="bg-red-100 text-red-700 p-3 rounded mb-4">{errorAdmin}</p>
+            )}
+            {mensajeExitoAdmin && (
+              <p className="bg-green-100 text-green-700 p-3 rounded mb-4">{mensajeExitoAdmin}</p>
+            )}
+
+            <form onSubmit={handleCrearAdmin} className="flex flex-col gap-3">
+              <div>
+                <label className="block mb-1">Nombre completo</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={formDataAdmin.nombre}
+                  onChange={handleChangeAdmin}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Correo electronico</label>
+                <input
+                  type="email"
+                  name="correo"
+                  value={formDataAdmin.correo}
+                  onChange={handleChangeAdmin}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Contraseña</label>
+                <input
+                  type="password"
+                  name="contraseña"
+                  value={formDataAdmin.contraseña}
+                  onChange={handleChangeAdmin}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Tipo de documento</label>
+                <select
+                  name="tipoDocumento"
+                  value={formDataAdmin.tipoDocumento}
+                  onChange={handleChangeAdmin}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="CC">Cedula de Ciudadania</option>
+                  <option value="CE">Cedula de Extranjeria</option>
+                  <option value="Pasaporte">Pasaporte</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block mb-1">Numero de documento</label>
+                <input
+                  type="text"
+                  name="numeroDocumento"
+                  value={formDataAdmin.numeroDocumento}
+                  onChange={handleChangeAdmin}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="mt-2 px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f]"
+              >
+                Crear administrador
+              </button>
+            </form>
+          </div>
+        )}
 
         {error && (
           <p className="bg-red-100 text-red-700 p-3 rounded mb-4 max-w-2xl">{error}</p>
