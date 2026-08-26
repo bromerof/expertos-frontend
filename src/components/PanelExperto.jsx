@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import Header from './Header'
 
 function PanelExperto() {
@@ -9,14 +9,12 @@ function PanelExperto() {
   const [editando, setEditando] = useState(false)
   const [formData, setFormData] = useState({
     nombre: '',
-    correo: '',
     descripcion: '',
     whatsapp: '',
     anosExperiencia: '',
     atiendePresencial: true,
     atiendeVirtual: false
   })
-
   const [ubicaciones, setUbicaciones] = useState([{ departamentoId: '', municipioId: '' }])
   const [departamentos, setDepartamentos] = useState([])
   const [municipiosPorDepartamento, setMunicipiosPorDepartamento] = useState({})
@@ -25,6 +23,10 @@ function PanelExperto() {
   const [profesionesPorCategoria, setProfesionesPorCategoria] = useState({})
   const [categoriaId, setCategoriaId] = useState('')
   const [profesionId, setProfesionId] = useState('')
+
+  const [numeroBusqueda, setNumeroBusqueda] = useState('')
+  const [resultadoBusqueda, setResultadoBusqueda] = useState(null)
+  const [errorBusqueda, setErrorBusqueda] = useState('')
 
   const expertoId = localStorage.getItem('expertoId')
   const token = localStorage.getItem('token')
@@ -51,15 +53,14 @@ function PanelExperto() {
       .then(res => res.json())
       .then(data => {
         setExperto(data)
-               setFormData({
+        setFormData({
           nombre: data.nombre || '',
-          correo: data.correo || '',
           descripcion: data.descripcion || '',
           whatsapp: data.whatsapp || '',
           anosExperiencia: data.anosExperiencia || '',
           atiendePresencial: data.atiendePresencial ?? true,
           atiendeVirtual: data.atiendeVirtual ?? false
-        }) 
+        })
       })
       .catch(err => console.error('Error al cargar el perfil:', err))
   }
@@ -201,6 +202,35 @@ function PanelExperto() {
       })
       .catch((err) => {
         setError(err.message)
+      })
+  }
+
+  const handleBuscarReputacion = () => {
+    setErrorBusqueda('')
+    setResultadoBusqueda(null)
+
+    if (!numeroBusqueda.trim()) {
+      setErrorBusqueda('Escribe un numero de WhatsApp para buscar')
+      return
+    }
+
+    fetch('http://localhost:3000/api/calificaciones/buscar/' + numeroBusqueda.trim(), {
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al buscar la reputacion')
+        }
+        return data
+      })
+      .then((data) => {
+        setResultadoBusqueda(data)
+      })
+      .catch((err) => {
+        setErrorBusqueda(err.message)
       })
   }
 
@@ -444,6 +474,60 @@ function PanelExperto() {
                   Eliminar perfil
                 </button>
               </div>
+
+              {experto.rol === 'experto' && (
+                <div className="mt-6 pt-6 border-t border-gray-200 max-w-md">
+                  <h3 className="font-bold mb-2">Verificar reputacion de un cliente</h3>
+                  <p className="text-sm text-gray-600 mb-2">
+                    Antes de aceptar un servicio, puedes revisar la reputacion de un cliente buscando su numero de WhatsApp.
+                  </p>
+
+                  <div className="flex gap-2 mb-3">
+                    <input
+                      type="text"
+                      value={numeroBusqueda}
+                      onChange={(e) => setNumeroBusqueda(e.target.value)}
+                      placeholder="Numero de WhatsApp"
+                      className="w-full p-2 border rounded"
+                    />
+                    <button
+                      onClick={handleBuscarReputacion}
+                      className="px-4 py-2 bg-[#2C3E50] text-white rounded cursor-pointer hover:bg-[#1a252f] whitespace-nowrap"
+                    >
+                      Buscar
+                    </button>
+                  </div>
+
+                  {errorBusqueda && (
+                    <p className="bg-red-100 text-red-700 p-3 rounded">{errorBusqueda}</p>
+                  )}
+
+                  {resultadoBusqueda && (
+                    <div className="bg-white border border-gray-300 rounded p-3">
+                      <p className="font-bold">{resultadoBusqueda.nombre}</p>
+                      <p className="text-sm text-gray-600 capitalize">Rol: {resultadoBusqueda.rol}</p>
+                      <p className="mt-1">
+                        {resultadoBusqueda.total > 0
+                          ? `${'★'.repeat(Math.round(resultadoBusqueda.promedio))}${'☆'.repeat(5 - Math.round(resultadoBusqueda.promedio))} (${resultadoBusqueda.promedio}/5, ${resultadoBusqueda.total} calificacion${resultadoBusqueda.total !== 1 ? 'es' : ''})`
+                          : 'Todavia no tiene calificaciones'}
+                      </p>
+                      {resultadoBusqueda.comentarios.length > 0 && (
+                        <ul className="mt-2 text-sm text-gray-700 list-disc list-inside">
+                          {resultadoBusqueda.comentarios.map((comentario, index) => (
+                            <li key={index}>{comentario}</li>
+                          ))}
+                        </ul>
+                      )}
+                      <Link
+                        to={`/calificar/${resultadoBusqueda.id}`}
+                        className="inline-block mt-3 px-4 py-2 bg-[#2C3E50] text-white rounded cursor-pointer hover:bg-[#1a252f]"
+                      >
+                        Calificar a este cliente
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         ) : (
@@ -459,17 +543,7 @@ function PanelExperto() {
                 required
               />
             </div>
-            <div>
-              <label className="block mb-1">Correo electronico</label>
-              <input
-                type="email"
-                name="correo"
-                value={formData.correo}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-                required
-              />
-            </div>
+
             {experto.rol !== 'cliente' && (
               <>
                 <div>
