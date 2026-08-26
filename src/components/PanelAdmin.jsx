@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { API_URL } from '../config'
 import { useNavigate } from 'react-router-dom'
 import Header from './Header'
 
@@ -31,7 +32,7 @@ function PanelAdmin() {
 
   const cargarPendientes = () => {
     setCargando(true)
-    fetch('http://localhost:3000/api/admin/expertos-pendientes', {
+    fetch(API_URL + '/api/admin/expertos-pendientes', {
       cache: 'no-store',
       headers: {
         'Authorization': 'Bearer ' + token
@@ -55,7 +56,7 @@ function PanelAdmin() {
   }
 
   const handleAprobar = (id) => {
-    fetch('http://localhost:3000/api/admin/expertos/' + id + '/aprobar', {
+    fetch(API_URL + '/api/admin/expertos/' + id + '/aprobar', {
       method: 'PUT',
       headers: {
         'Authorization': 'Bearer ' + token
@@ -77,7 +78,7 @@ function PanelAdmin() {
   }
 
   const handleSuspender = (id) => {
-    fetch('http://localhost:3000/api/admin/expertos/' + id + '/suspender', {
+    fetch(API_URL + '/api/admin/expertos/' + id + '/suspender', {
       method: 'PUT',
       headers: {
         'Authorization': 'Bearer ' + token
@@ -108,7 +109,7 @@ function PanelAdmin() {
     setErrorAdmin('')
     setMensajeExitoAdmin('')
 
-    fetch('http://localhost:3000/api/admin/crear-admin', {
+    fetch(API_URL + '/api/admin/crear-admin', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

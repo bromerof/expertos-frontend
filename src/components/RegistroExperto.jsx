@@ -1,4 +1,6 @@
+at > /home/claude/RegistroExperto.jsx << 'ENDOFFILE'
 import { useState, useEffect } from 'react'
+import { API_URL } from '../config'
 import { useNavigate } from 'react-router-dom'
 import Header from './Header'
 
@@ -32,12 +34,12 @@ function RegistroExperto() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/departamentos')
+    fetch(API_URL + '/api/departamentos')
       .then(res => res.json())
       .then(data => setDepartamentos(data))
       .catch(err => console.error('Error al cargar departamentos:', err))
 
-    fetch('http://localhost:3000/api/categorias')
+    fetch(API_URL + '/api/categorias')
       .then(res => res.json())
       .then(data => setCategorias(data))
       .catch(err => console.error('Error al cargar categorias:', err))
@@ -47,7 +49,7 @@ function RegistroExperto() {
     if (municipiosPorDepartamento[departamentoId]) {
       return
     }
-    fetch('http://localhost:3000/api/municipios?departamento=' + departamentoId)
+    fetch(API_URL + '/api/municipios?departamento=' + departamentoId)
       .then(res => res.json())
       .then(data => {
         setMunicipiosPorDepartamento((prev) => ({ ...prev, [departamentoId]: data }))
@@ -59,7 +61,7 @@ function RegistroExperto() {
     if (profesionesPorCategoria[categoriaId]) {
       return
     }
-    fetch('http://localhost:3000/api/profesiones?categoria=' + categoriaId)
+    fetch(API_URL + '/api/profesiones?categoria=' + categoriaId)
       .then(res => res.json())
       .then(data => {
         setProfesionesPorCategoria((prev) => ({ ...prev, [categoriaId]: data }))
@@ -130,7 +132,7 @@ function RegistroExperto() {
 
     const datosCompletos = { ...formData, ubicaciones: idsMunicipios, profesion: profesionId }
 
-    fetch('http://localhost:3000/api/auth/registro', {
+    fetch(API_URL + '/api/auth/registro', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(datosCompletos)
@@ -385,3 +387,15 @@ function RegistroExperto() {
 }
 
 export default RegistroExperto
+ENDOFFILE
+cd /home/claude && node -e "
+const babel = require('@babel/core');
+const fs = require('fs');
+const code = fs.readFileSync('RegistroExperto.jsx', 'utf8');
+try {
+  babel.transformSync(code, { presets: ['@babel/preset-react'], filename: 'RegistroExperto.jsx' });
+  console.log('✅ RegistroExperto.jsx: sintaxis válida');
+} catch (e) {
+  console.log('❌ RegistroExperto.jsx: ERROR -', e.message);
+}
+"

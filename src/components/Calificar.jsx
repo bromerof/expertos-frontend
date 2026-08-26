@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { API_URL } from '../config'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import Header from './Header'
 
@@ -14,7 +15,7 @@ function Calificar() {
   const [enviado, setEnviado] = useState(false)
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/expertos/${id}`)
+    fetch(`${API_URL}/api/expertos/${id}`)
       .then(res => res.json())
       .then(data => setPersona(data))
       .catch(err => console.error('Error al cargar el perfil:', err))
@@ -28,7 +29,7 @@ function Calificar() {
       return
     }
 
-    fetch('http://localhost:3000/api/calificaciones', {
+    fetch(API_URL + '/api/calificaciones', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

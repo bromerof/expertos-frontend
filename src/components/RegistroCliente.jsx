@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { API_URL } from '../config'
 import { useNavigate } from 'react-router-dom'
 import Header from './Header'
 
@@ -26,7 +27,7 @@ function RegistroCliente() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/departamentos')
+    fetch(API_URL + '/api/departamentos')
       .then(res => res.json())
       .then(data => setDepartamentos(data))
       .catch(err => console.error('Error al cargar departamentos:', err))
@@ -36,7 +37,7 @@ function RegistroCliente() {
     if (municipiosPorDepartamento[idDepartamento]) {
       return
     }
-    fetch('http://localhost:3000/api/municipios?departamento=' + idDepartamento)
+    fetch(API_URL + '/api/municipios?departamento=' + idDepartamento)
       .then(res => res.json())
       .then(data => {
         setMunicipiosPorDepartamento((prev) => ({ ...prev, [idDepartamento]: data }))
@@ -75,7 +76,7 @@ function RegistroCliente() {
       rol: 'cliente'
     }
 
-    fetch('http://localhost:3000/api/auth/registro', {
+    fetch(API_URL + '/api/auth/registro', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(datosCompletos)

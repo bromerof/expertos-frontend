@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { API_URL } from '../config'
 import { useNavigate } from 'react-router-dom'
 import Header from './Header'
 
@@ -6,19 +7,16 @@ function Login() {
   const navigate = useNavigate()
   const [correo, setCorreo] = useState('')
   const [contrasena, setContrasena] = useState('')
-  const [rolSeleccionado, setRolSeleccionado] = useState('')
+  const [rolSeleccionado, setRolSeleccionado] = useState('experto')
   const [error, setError] = useState('')
 
   const handleSubmit = (e) => {
     e.preventDefault()
     setError('')
 
-    const datosLogin = { correo: correo, contraseña: contrasena }
-    if (rolSeleccionado) {
-      datosLogin.rol = rolSeleccionado
-    }
+    const datosLogin = { correo: correo, contraseña: contrasena, rol: rolSeleccionado }
 
-    fetch('http://localhost:3000/api/auth/login', {
+    fetch(API_URL + '/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(datosLogin)
@@ -81,14 +79,14 @@ function Login() {
 
           <div>
             <label className="block mb-1">
-              ¿Tienes mas de una cuenta con este correo? Especifica cual (opcional)
+              ¿Como quieres ingresar?
             </label>
             <select
               value={rolSeleccionado}
               onChange={(e) => setRolSeleccionado(e.target.value)}
               className="w-full p-2 border rounded"
+              required
             >
-              
               <option value="experto">Entrar como Experto</option>
               <option value="cliente">Entrar como Cliente</option>
             </select>

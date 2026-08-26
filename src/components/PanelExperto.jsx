@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
+import { API_URL } from '../config'
 import Header from './Header'
 import Insignias from './Insignias'
 
@@ -40,19 +41,19 @@ function PanelExperto() {
       return
     }
     cargarExperto()
-    fetch('http://localhost:3000/api/departamentos')
+    fetch(API_URL + '/api/departamentos')
       .then(res => res.json())
       .then(data => setDepartamentos(data))
       .catch(err => console.error('Error al cargar departamentos:', err))
 
-    fetch('http://localhost:3000/api/categorias')
+    fetch(API_URL + '/api/categorias')
       .then(res => res.json())
       .then(data => setCategorias(data))
       .catch(err => console.error('Error al cargar categorias:', err))
   }, [expertoId, token, navigate])
 
   const cargarExperto = () => {
-    fetch('http://localhost:3000/api/expertos/' + expertoId, { cache: 'no-store' })
+    fetch(API_URL + '/api/expertos/' + expertoId, { cache: 'no-store' })
       .then(res => res.json())
       .then(data => {
         setExperto(data)
@@ -67,7 +68,7 @@ function PanelExperto() {
       })
       .catch(err => console.error('Error al cargar el perfil:', err))
 
-    fetch('http://localhost:3000/api/calificaciones/' + expertoId, { cache: 'no-store' })
+    fetch(API_URL + '/api/calificaciones/' + expertoId, { cache: 'no-store' })
       .then(res => res.json())
       .then(data => setMisCalificaciones(data))
       .catch(err => console.error('Error al cargar las calificaciones:', err))
@@ -77,7 +78,7 @@ function PanelExperto() {
     if (municipiosPorDepartamento[departamentoId]) {
       return
     }
-    fetch('http://localhost:3000/api/municipios?departamento=' + departamentoId)
+    fetch(API_URL + '/api/municipios?departamento=' + departamentoId)
       .then(res => res.json())
       .then(data => {
         setMunicipiosPorDepartamento((prev) => ({ ...prev, [departamentoId]: data }))
@@ -89,7 +90,7 @@ function PanelExperto() {
     if (profesionesPorCategoria[categoriaId]) {
       return
     }
-    fetch('http://localhost:3000/api/profesiones?categoria=' + categoriaId)
+    fetch(API_URL + '/api/profesiones?categoria=' + categoriaId)
       .then(res => res.json())
       .then(data => {
         setProfesionesPorCategoria((prev) => ({ ...prev, [categoriaId]: data }))
@@ -189,7 +190,7 @@ function PanelExperto() {
       datosCompletos.profesion = profesionId
     }
 
-    fetch('http://localhost:3000/api/expertos/' + expertoId, {
+    fetch(API_URL + '/api/expertos/' + expertoId, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -222,7 +223,7 @@ function PanelExperto() {
       return
     }
 
-    fetch('http://localhost:3000/api/calificaciones/buscar/' + numeroBusqueda.trim(), {
+    fetch(API_URL + '/api/calificaciones/buscar/' + numeroBusqueda.trim(), {
       headers: {
         'Authorization': 'Bearer ' + token
       }
@@ -246,7 +247,7 @@ function PanelExperto() {
     const confirmar = window.confirm('Estas seguro de que quieres eliminar tu perfil? Esta accion no se puede deshacer.')
     if (!confirmar) return
 
-    fetch('http://localhost:3000/api/expertos/' + expertoId, {
+    fetch(API_URL + '/api/expertos/' + expertoId, {
       method: 'DELETE',
       headers: {
         'Authorization': 'Bearer ' + token
@@ -290,7 +291,7 @@ function PanelExperto() {
       setError('El archivo no debe superar los 5MB')
       return
     }
-    fetch('http://localhost:3000/api/expertos/' + expertoId + '/foto', {
+    fetch(API_URL + '/api/expertos/' + expertoId + '/foto', {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + token
@@ -328,7 +329,7 @@ function PanelExperto() {
     const datosFormulario = new FormData()
     datosFormulario.append('fotoDocumentoFrente', archivo)
 
-    fetch('http://localhost:3000/api/expertos/' + expertoId + '/foto-documento-frente', {
+    fetch(API_URL + '/api/expertos/' + expertoId + '/foto-documento-frente', {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + token
@@ -366,7 +367,7 @@ function PanelExperto() {
     const datosFormulario = new FormData()
     datosFormulario.append('fotoDocumentoReverso', archivo)
 
-    fetch('http://localhost:3000/api/expertos/' + expertoId + '/foto-documento-reverso', {
+    fetch(API_URL + '/api/expertos/' + expertoId + '/foto-documento-reverso', {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + token

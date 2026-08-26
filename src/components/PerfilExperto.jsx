@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { API_URL } from '../config'
 import { useParams, Link } from 'react-router-dom'
 import Header from './Header'
 import Insignias from './Insignias'
@@ -10,12 +11,12 @@ function PerfilExperto() {
   const [mostrarAvisoCalificar, setMostrarAvisoCalificar] = useState(false)
 
   useEffect(() => {
-    fetch(`http://localhost:3000/api/expertos/${id}`)
+    fetch(`${API_URL}/api/expertos/${id}`)
       .then(res => res.json())
       .then(data => setExperto(data))
       .catch(err => console.error('Error al cargar el experto:', err))
 
-    fetch(`http://localhost:3000/api/calificaciones/${id}`)
+    fetch(`${API_URL}/api/calificaciones/${id}`)
       .then(res => res.json())
       .then(data => setCalificaciones(data))
       .catch(err => console.error('Error al cargar las calificaciones:', err))
@@ -33,7 +34,7 @@ function PerfilExperto() {
       opciones.headers = { 'Authorization': 'Bearer ' + token }
     }
 
-    fetch(`http://localhost:3000/api/expertos/${id}/contacto`, opciones)
+    fetch(`${API_URL}/api/expertos/${id}/contacto`, opciones)
       .then(res => res.json())
       .then(data => {
         window.open(data.enlaceWhatsApp, '_blank')

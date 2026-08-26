@@ -1,4 +1,6 @@
+cat > /home/claude/Home.jsx << 'ENDOFFILE'
 import { useState, useEffect } from 'react'
+import { API_URL } from '../config'
 import { Link } from 'react-router-dom'
 import Header from './Header'
 
@@ -12,7 +14,7 @@ function Home() {
 
   useEffect(() => {
     cargarExpertos()
-    fetch('http://localhost:3000/api/departamentos')
+    fetch(API_URL + '/api/departamentos')
       .then(res => res.json())
       .then(data => setDepartamentos(data))
       .catch(err => console.error('Error al cargar departamentos:', err))
@@ -20,7 +22,7 @@ function Home() {
 
   const cargarExpertos = (params = {}) => {
     const query = new URLSearchParams(params).toString()
-    fetch('http://localhost:3000/api/expertos' + (query ? '?' + query : ''), { cache: 'no-store' })
+    fetch(API_URL + '/api/expertos' + (query ? '?' + query : ''), { cache: 'no-store' })
       .then(res => res.json())
       .then(data => setExpertos(data))
       .catch(err => console.error('Error al cargar expertos:', err))
@@ -31,7 +33,7 @@ function Home() {
     setMunicipioNombre('')
     setMunicipios([])
     if (id) {
-      fetch('http://localhost:3000/api/municipios?departamento=' + id)
+      fetch(API_URL + '/api/municipios?departamento=' + id)
         .then(res => res.json())
         .then(data => setMunicipios(data))
         .catch(err => console.error('Error al cargar municipios:', err))
@@ -139,3 +141,15 @@ function Home() {
 }
 
 export default Home
+ENDOFFILE
+cd /home/claude && node -e "
+const babel = require('@babel/core');
+const fs = require('fs');
+const code = fs.readFileSync('Home.jsx', 'utf8');
+try {
+  babel.transformSync(code, { presets: ['@babel/preset-react'], filename: 'Home.jsx' });
+  console.log('✅ Home.jsx: sintaxis válida');
+} catch (e) {
+  console.log('❌ Home.jsx: ERROR -', e.message);
+}
+"
