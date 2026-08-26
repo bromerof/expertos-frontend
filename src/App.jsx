@@ -6,6 +6,7 @@ import RegistroCliente from './components/RegistroCliente'
 import Login from './components/Login'
 import PanelExperto from './components/PanelExperto'
 import PanelAdmin from './components/PanelAdmin'
+import Calificar from './components/Calificar'
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/panel" element={<PanelExperto />} />
       <Route path="/admin" element={<PanelAdmin />} />
+      <Route path="/calificar/:id" element={<Calificar />} />
     </Routes>
   )
 }
