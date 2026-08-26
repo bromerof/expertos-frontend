@@ -1,4 +1,3 @@
-at > /home/claude/RegistroExperto.jsx << 'ENDOFFILE'
 import { useState, useEffect } from 'react'
 import { API_URL } from '../config'
 import { useNavigate } from 'react-router-dom'
@@ -387,15 +386,3 @@ function RegistroExperto() {
 }
 
 export default RegistroExperto
-ENDOFFILE
-cd /home/claude && node -e "
-const babel = require('@babel/core');
-const fs = require('fs');
-const code = fs.readFileSync('RegistroExperto.jsx', 'utf8');
-try {
-  babel.transformSync(code, { presets: ['@babel/preset-react'], filename: 'RegistroExperto.jsx' });
-  console.log('✅ RegistroExperto.jsx: sintaxis válida');
-} catch (e) {
-  console.log('❌ RegistroExperto.jsx: ERROR -', e.message);
-}
-"

@@ -1,4 +1,3 @@
-cat > /home/claude/Home.jsx << 'ENDOFFILE'
 import { useState, useEffect } from 'react'
 import { API_URL } from '../config'
 import { Link } from 'react-router-dom'
@@ -141,15 +140,3 @@ function Home() {
 }
 
 export default Home
-ENDOFFILE
-cd /home/claude && node -e "
-const babel = require('@babel/core');
-const fs = require('fs');
-const code = fs.readFileSync('Home.jsx', 'utf8');
-try {
-  babel.transformSync(code, { presets: ['@babel/preset-react'], filename: 'Home.jsx' });
-  console.log('✅ Home.jsx: sintaxis válida');
-} catch (e) {
-  console.log('❌ Home.jsx: ERROR -', e.message);
-}
-"
