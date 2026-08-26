@@ -5,6 +5,7 @@ import Header from './Header'
 function PerfilExperto() {
   const { id } = useParams()
   const [experto, setExperto] = useState(null)
+  const [calificaciones, setCalificaciones] = useState(null)
   const [mostrarAvisoCalificar, setMostrarAvisoCalificar] = useState(false)
 
   useEffect(() => {
@@ -12,6 +13,11 @@ function PerfilExperto() {
       .then(res => res.json())
       .then(data => setExperto(data))
       .catch(err => console.error('Error al cargar el experto:', err))
+
+    fetch(`http://localhost:3000/api/calificaciones/${id}`)
+      .then(res => res.json())
+      .then(data => setCalificaciones(data))
+      .catch(err => console.error('Error al cargar las calificaciones:', err))
   }, [id])
 
   if (!experto) {
@@ -68,6 +74,35 @@ function PerfilExperto() {
           <p>Años de experiencia: {experto.anosExperiencia}</p>
 
           <p className="mt-4 max-w-xl text-gray-700">{experto.descripcion}</p>
+
+          {calificaciones && (
+            <div className="mt-4">
+              {calificaciones.total > 0 ? (
+                <>
+                  <p className="text-lg">
+                    <span className="text-yellow-500">
+                      {'★'.repeat(Math.round(calificaciones.promedio))}
+                      {'☆'.repeat(5 - Math.round(calificaciones.promedio))}
+                    </span>
+                    {' '}{calificaciones.promedio}/5 ({calificaciones.total} calificacion{calificaciones.total !== 1 ? 'es' : ''})
+                  </p>
+                  {calificaciones.calificaciones.length > 0 && (
+                    <ul className="mt-2 max-w-xl text-sm text-gray-700">
+                      {calificaciones.calificaciones
+                        .filter(c => c.comentario)
+                        .map((c) => (
+                          <li key={c._id} className="mb-1">
+                            <span className="font-semibold">{c.autor && c.autor.nombre}:</span> {c.comentario}
+                          </li>
+                        ))}
+                    </ul>
+                  )}
+                </>
+              ) : (
+                <p className="text-gray-500">Todavia no tiene calificaciones</p>
+              )}
+            </div>
+          )}
 
           <button
             onClick={handleContactar}
