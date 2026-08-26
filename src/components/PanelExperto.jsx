@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Header from './Header'
+import Insignias from './Insignias'
 
 function PanelExperto() {
   const navigate = useNavigate()
@@ -27,6 +28,8 @@ function PanelExperto() {
   const [numeroBusqueda, setNumeroBusqueda] = useState('')
   const [resultadoBusqueda, setResultadoBusqueda] = useState(null)
   const [errorBusqueda, setErrorBusqueda] = useState('')
+
+  const [misCalificaciones, setMisCalificaciones] = useState(null)
 
   const expertoId = localStorage.getItem('expertoId')
   const token = localStorage.getItem('token')
@@ -63,6 +66,11 @@ function PanelExperto() {
         })
       })
       .catch(err => console.error('Error al cargar el perfil:', err))
+
+    fetch('http://localhost:3000/api/calificaciones/' + expertoId, { cache: 'no-store' })
+      .then(res => res.json())
+      .then(data => setMisCalificaciones(data))
+      .catch(err => console.error('Error al cargar las calificaciones:', err))
   }
 
   const cargarMunicipios = (departamentoId) => {
@@ -414,8 +422,26 @@ function PanelExperto() {
                 <input type="file" accept="image/*" onChange={handleSubirFotoPerfil} className="hidden" />
               </label>
             </div>
-            <div>
+                      
+              <div>
               <h3 className="text-2xl font-bold">{experto.nombre}</h3>
+              <p className="text-sm text-gray-500">
+                Miembro desde: {new Date(experto.fechaCreacion).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </p>
+
+              {misCalificaciones && misCalificaciones.total > 0 && (
+                <div className="mb-2">
+                  <p>
+                    <span className="text-yellow-500">
+                      {'★'.repeat(Math.round(misCalificaciones.promedio))}
+                      {'☆'.repeat(5 - Math.round(misCalificaciones.promedio))}
+                    </span>
+                    {' '}{misCalificaciones.promedio}/5 ({misCalificaciones.total} calificacion{misCalificaciones.total !== 1 ? 'es' : ''})
+                  </p>
+                  <Insignias promedio={misCalificaciones.promedio} total={misCalificaciones.total} />
+                </div>
+              )}
+
               {experto.rol !== 'cliente' && (
                 <>
                   <p>Categoria: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>

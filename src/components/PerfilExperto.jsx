@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import Header from './Header'
+import Insignias from './Insignias'
 
 function PerfilExperto() {
   const { id } = useParams()
@@ -56,6 +57,9 @@ function PerfilExperto() {
         {/* Info */}
         <div>
           <h2 className="text-2xl font-bold">{experto.nombre}</h2>
+          <p className="text-sm text-gray-500">
+            Miembro desde: {new Date(experto.fechaCreacion).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}
+          </p>
           <p>Categoría: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>
           <p>Profesión: {experto.profesion && experto.profesion.nombre}</p>
 
@@ -86,13 +90,16 @@ function PerfilExperto() {
                     </span>
                     {' '}{calificaciones.promedio}/5 ({calificaciones.total} calificacion{calificaciones.total !== 1 ? 'es' : ''})
                   </p>
+                  <Insignias promedio={calificaciones.promedio} total={calificaciones.total} />
                   {calificaciones.calificaciones.length > 0 && (
                     <ul className="mt-2 max-w-xl text-sm text-gray-700">
                       {calificaciones.calificaciones
                         .filter(c => c.comentario)
                         .map((c) => (
                           <li key={c._id} className="mb-1">
-                            <span className="font-semibold">{c.autor && c.autor.nombre}:</span> {c.comentario}
+                            <span className="font-semibold">{c.autor && c.autor.nombre}</span>
+                            <span className="text-gray-400"> ({new Date(c.fechaCreacion).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}):</span>
+                            {' '}{c.comentario}
                           </li>
                         ))}
                     </ul>
