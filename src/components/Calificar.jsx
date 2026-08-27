@@ -12,14 +12,25 @@ function Calificar() {
   const [puntuacion, setPuntuacion] = useState(0)
   const [comentario, setComentario] = useState('')
   const [error, setError] = useState('')
+  const [errorCarga, setErrorCarga] = useState('')
   const [enviado, setEnviado] = useState(false)
 
   useEffect(() => {
-    fetch(`${API_URL}/api/expertos/${id}`)
-      .then(res => res.json())
+    if (!token) return
+
+    fetch(`${API_URL}/api/expertos/${id}`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al cargar el perfil')
+        }
+        return data
+      })
       .then(data => setPersona(data))
-      .catch(err => console.error('Error al cargar el perfil:', err))
-  }, [id])
+      .catch(err => setErrorCarga(err.message))
+  }, [id, token])
 
   const handleEnviar = () => {
     setError('')
@@ -65,6 +76,17 @@ function Calificar() {
           <Link to="/login" className="text-[#2C3E50] underline cursor-pointer hover:text-[#1a252f]">
             Ir a iniciar sesion
           </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (errorCarga) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="p-6">
+          <p className="bg-red-100 text-red-700 p-3 rounded max-w-lg">{errorCarga}</p>
         </div>
       </div>
     )

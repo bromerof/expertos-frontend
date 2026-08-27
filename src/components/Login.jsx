@@ -31,9 +31,12 @@ function Login() {
             .then((data) => {
         localStorage.setItem('token', data.token)
         localStorage.setItem('expertoId', data.experto.id)
+        localStorage.setItem('rol', data.experto.rol)
 
         if (data.experto.rol === 'cliente') {
           navigate('/panel')
+        } else if (data.experto.rol === 'admin') {
+          navigate('/admin')
         } else {
           navigate('/experto/' + data.experto.id)
         }
@@ -89,6 +92,7 @@ function Login() {
             >
               <option value="experto">Entrar como Experto</option>
               <option value="cliente">Entrar como Cliente</option>
+              <option value="admin">Entrar como Administrador</option>
             </select>
           </div>
 

@@ -8,6 +8,7 @@ function PanelExperto() {
   const navigate = useNavigate()
   const [experto, setExperto] = useState(null)
   const [error, setError] = useState('')
+  const [errorCarga, setErrorCarga] = useState('')
   const [editando, setEditando] = useState(false)
   const [formData, setFormData] = useState({
     nombre: '',
@@ -53,8 +54,19 @@ function PanelExperto() {
   }, [expertoId, token, navigate])
 
   const cargarExperto = () => {
-    fetch(API_URL + '/api/expertos/' + expertoId, { cache: 'no-store' })
-      .then(res => res.json())
+    setErrorCarga('')
+
+    fetch(API_URL + '/api/expertos/' + expertoId, {
+      cache: 'no-store',
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al cargar el perfil')
+        }
+        return data
+      })
       .then(data => {
         setExperto(data)
         setFormData({
@@ -66,9 +78,14 @@ function PanelExperto() {
           atiendeVirtual: data.atiendeVirtual ?? false
         })
       })
-      .catch(err => console.error('Error al cargar el perfil:', err))
+      .catch(err => {
+        setErrorCarga(err.message)
+      })
 
-    fetch(API_URL + '/api/calificaciones/' + expertoId, { cache: 'no-store' })
+    fetch(API_URL + '/api/calificaciones/' + expertoId, {
+      cache: 'no-store',
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
       .then(res => res.json())
       .then(data => setMisCalificaciones(data))
       .catch(err => console.error('Error al cargar las calificaciones:', err))
@@ -263,18 +280,13 @@ function PanelExperto() {
       .then(() => {
         localStorage.removeItem('token')
         localStorage.removeItem('expertoId')
+        localStorage.removeItem('rol')
         alert('Perfil eliminado correctamente')
         navigate('/')
       })
       .catch((err) => {
         setError(err.message)
       })
-  }
-
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('expertoId')
-    navigate('/login')
   }
 
     const handleSubirFotoPerfil = (e) => {
@@ -389,17 +401,24 @@ function PanelExperto() {
       })
   }
 
+  if (errorCarga) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="p-6">
+          <p className="bg-red-100 text-red-700 p-3 rounded max-w-lg">{errorCarga}</p>
+        </div>
+      </div>
+    )
+  }
+
   if (!experto) {
     return <p className="p-6">Cargando...</p>
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header>
-        <button onClick={handleLogout} className="text-white underline cursor-pointer hover:text-gray-300">
-          Cerrar sesion
-        </button>
-      </Header>
+      <Header />
 
       <div className="p-6">
         <h2 className="text-xl font-bold mb-4">Mi panel</h2>

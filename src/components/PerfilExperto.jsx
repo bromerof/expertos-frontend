@@ -9,22 +9,30 @@ function PerfilExperto() {
   const [experto, setExperto] = useState(null)
   const [calificaciones, setCalificaciones] = useState(null)
   const [mostrarAvisoCalificar, setMostrarAvisoCalificar] = useState(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    fetch(`${API_URL}/api/expertos/${id}`)
-      .then(res => res.json())
+    setError('')
+    const token = localStorage.getItem('token')
+
+    fetch(`${API_URL}/api/expertos/${id}`, {
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al cargar el experto')
+        }
+        return data
+      })
       .then(data => setExperto(data))
-      .catch(err => console.error('Error al cargar el experto:', err))
+      .catch(err => setError(err.message))
 
     fetch(`${API_URL}/api/calificaciones/${id}`)
       .then(res => res.json())
       .then(data => setCalificaciones(data))
       .catch(err => console.error('Error al cargar las calificaciones:', err))
   }, [id])
-
-  if (!experto) {
-    return <p className="p-6">Cargando...</p>
-  }
 
   const handleContactar = () => {
     const token = localStorage.getItem('token')
@@ -35,7 +43,13 @@ function PerfilExperto() {
     }
 
     fetch(`${API_URL}/api/expertos/${id}/contacto`, opciones)
-      .then(res => res.json())
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al generar el enlace de contacto')
+        }
+        return data
+      })
       .then(data => {
         window.open(data.enlaceWhatsApp, '_blank')
         // Si el cliente esta logueado, le recordamos que puede calificar
@@ -44,7 +58,22 @@ function PerfilExperto() {
           setMostrarAvisoCalificar(true)
         }
       })
-      .catch(err => console.error('Error al generar el enlace de contacto:', err))
+      .catch(err => setError(err.message))
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="p-6">
+          <p className="bg-red-100 text-red-700 p-3 rounded max-w-lg">{error}</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!experto) {
+    return <p className="p-6">Cargando...</p>
   }
 
   return (

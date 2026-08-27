@@ -10,6 +10,7 @@ function Home() {
   const [municipios, setMunicipios] = useState([])
   const [departamentoId, setDepartamentoId] = useState('')
   const [municipioNombre, setMunicipioNombre] = useState('')
+  const [error, setError] = useState('')
 
   useEffect(() => {
     cargarExpertos()
@@ -20,11 +21,26 @@ function Home() {
   }, [])
 
   const cargarExpertos = (params = {}) => {
+    setError('')
+    const token = localStorage.getItem('token')
     const query = new URLSearchParams(params).toString()
-    fetch(API_URL + '/api/expertos' + (query ? '?' + query : ''), { cache: 'no-store' })
-      .then(res => res.json())
-      .then(data => setExpertos(data))
-      .catch(err => console.error('Error al cargar expertos:', err))
+
+    fetch(API_URL + '/api/expertos' + (query ? '?' + query : ''), {
+      cache: 'no-store',
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al cargar expertos')
+        }
+        return data
+      })
+      .then((data) => setExpertos(data))
+      .catch((err) => {
+        setExpertos([])
+        setError(err.message)
+      })
   }
 
   const handleDepartamentoChange = (id) => {
@@ -114,8 +130,12 @@ function Home() {
           </button>
         </div>
 
+        {error && (
+          <p className="bg-red-100 text-red-700 p-3 rounded mt-4 max-w-lg">{error}</p>
+        )}
+
         <div className="flex flex-wrap gap-4 mt-6">
-          {expertos.length === 0 ? (
+          {!error && expertos.length === 0 ? (
             <p>No se encontraron expertos con esos criterios.</p>
           ) : (
             expertos.map((experto) => (
