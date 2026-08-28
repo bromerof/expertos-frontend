@@ -27,7 +27,7 @@ function Header({ children }) {
       </div>
       <div className="flex items-center gap-4 flex-wrap">
         {token && rol === 'cliente' && (
-          <Link to="/" className="text-white underline cursor-pointer hover:text-gray-300">
+          <Link to="/buscar" className="text-white underline cursor-pointer hover:text-gray-300">
             Buscar expertos
           </Link>
         )}

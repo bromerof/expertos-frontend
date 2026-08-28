@@ -16,7 +16,10 @@ function PanelExperto() {
     whatsapp: '',
     anosExperiencia: '',
     atiendePresencial: true,
-    atiendeVirtual: false
+    atiendeVirtual: false,
+    coberturaVirtualNacional: false,
+    otraCategoriaTexto: '',
+    otraProfesionTexto: ''
   })
   const [ubicaciones, setUbicaciones] = useState([{ departamentoId: '', municipioId: '' }])
   const [departamentos, setDepartamentos] = useState([])
@@ -75,7 +78,10 @@ function PanelExperto() {
           whatsapp: data.whatsapp || '',
           anosExperiencia: data.anosExperiencia || '',
           atiendePresencial: data.atiendePresencial ?? true,
-          atiendeVirtual: data.atiendeVirtual ?? false
+          atiendeVirtual: data.atiendeVirtual ?? false,
+          coberturaVirtualNacional: data.coberturaVirtualNacional ?? false,
+          otraCategoriaTexto: data.otraCategoriaTexto || '',
+          otraProfesionTexto: data.otraProfesionTexto || ''
         })
       })
       .catch(err => {
@@ -184,12 +190,38 @@ function PanelExperto() {
     setProfesionId(nuevaProfesionId)
   }
 
+  const profesionSeleccionadaEdicion = (profesionesPorCategoria[categoriaId] || [])
+    .find(p => p._id === profesionId)
+  const categoriaSeleccionadaEdicion = categorias.find(c => c._id === categoriaId)
+  const categoriaEsOtraEdicion = Boolean(
+    categoriaSeleccionadaEdicion && categoriaSeleccionadaEdicion.nombre.trim().toLowerCase() === 'otra'
+  )
+  const profesionEsOtraEdicion = Boolean(
+    profesionSeleccionadaEdicion && profesionSeleccionadaEdicion.nombre.trim().toLowerCase() === 'otra'
+  )
+
   const handleGuardar = (e) => {
     e.preventDefault()
     setError('')
 
     if (experto.rol !== 'cliente' && !profesionId) {
       setError('Debes seleccionar una categoria y una profesion')
+      return
+    }
+
+    const profesionSeleccionada = (profesionesPorCategoria[categoriaId] || [])
+      .find(p => p._id === profesionId)
+    const categoriaSeleccionada = categorias.find(c => c._id === categoriaId)
+    const categoriaEsOtra = categoriaSeleccionada && categoriaSeleccionada.nombre.trim().toLowerCase() === 'otra'
+    const profesionEsOtra = profesionSeleccionada && profesionSeleccionada.nombre.trim().toLowerCase() === 'otra'
+
+    if (categoriaEsOtra && !formData.otraCategoriaTexto.trim()) {
+      setError('Debes indicar cual es tu categoria especifica')
+      return
+    }
+
+    if (profesionEsOtra && !formData.otraProfesionTexto.trim()) {
+      setError('Debes indicar cual es tu profesion especifica')
       return
     }
 
@@ -427,6 +459,35 @@ function PanelExperto() {
           <p className="bg-red-100 text-red-700 p-3 rounded mb-4 max-w-lg">{error}</p>
         )}
 
+        {experto.rol === 'experto' && !experto.verificado && (
+          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-300 rounded max-w-lg">
+            {experto.foto && experto.fotoDocumentoFrente && experto.fotoDocumentoReverso ? (
+              <p className="text-yellow-800">
+                Ya subiste tu foto de perfil y tus documentos. Pronto seras aprobado por el administrador.
+                Vuelve a iniciar sesion en 20 a 30 minutos para verificar tu acceso completo.
+              </p>
+            ) : (
+              <>
+                <p className="text-yellow-800 font-bold mb-1">Tu cuenta esta pendiente de aprobacion</p>
+                <p className="text-yellow-800 text-sm">
+                  Para que el administrador pueda aprobarte, sube tu foto de perfil y las fotos (frente y reverso)
+                  de tu documento de identidad mas abajo.
+                </p>
+              </>
+            )}
+          </div>
+        )}
+
+        {experto.rol === 'cliente' && !experto.verificado && (
+          <div className="mb-4 p-4 bg-yellow-50 border border-yellow-300 rounded max-w-lg">
+            <p className="text-yellow-800 font-bold mb-1">Tu cuenta esta pendiente de aprobacion</p>
+            <p className="text-yellow-800 text-sm">
+              Un administrador debe aprobar tu cuenta antes de que puedas buscar expertos.
+              Vuelve a iniciar sesion mas tarde para verificar tu acceso.
+            </p>
+          </div>
+        )}
+
         {!editando ? (
           <div className="flex gap-6">
                        <div className="flex flex-col items-center gap-2">
@@ -465,7 +526,13 @@ function PanelExperto() {
               {experto.rol !== 'cliente' && (
                 <>
                   <p>Categoria: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>
+                  {experto.otraCategoriaTexto && (
+                    <p>¿Que otra categoria?: {experto.otraCategoriaTexto}</p>
+                  )}
                   <p>Profesion: {experto.profesion && experto.profesion.nombre}</p>
+                  {experto.otraProfesionTexto && (
+                    <p>¿Cual otra profesion?: {experto.otraProfesionTexto}</p>
+                  )}
                 </>
               )}
               <p>
@@ -521,7 +588,7 @@ function PanelExperto() {
                 </button>
               </div>
 
-              {experto.rol === 'experto' && (
+              {experto.rol === 'experto' && experto.verificado && (
                 <div className="mt-6 pt-6 border-t border-gray-200 max-w-md">
                   <h3 className="font-bold mb-2">Verificar reputacion de un cliente</h3>
                   <p className="text-sm text-gray-600 mb-2">
@@ -604,7 +671,26 @@ function PanelExperto() {
                       <option key={cat._id} value={cat._id}>{cat.nombre}</option>
                     ))}
                   </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Si no encuentras tu categoria, selecciona "Otra".
+                  </p>
                 </div>
+
+                {categoriaEsOtraEdicion && (
+                  <div>
+                    <label className="block mb-1">¿Que otra categoria?</label>
+                    <input
+                      type="text"
+                      name="otraCategoriaTexto"
+                      value={formData.otraCategoriaTexto}
+                      onChange={handleChange}
+                      placeholder="Ej. Diseñador de paisajes"
+                      className="w-full p-2 border rounded"
+                      autoComplete="off"
+                      required
+                    />
+                  </div>
+                )}
 
                 <div>
                   <label className="block mb-1">Profesion especifica</label>
@@ -619,7 +705,26 @@ function PanelExperto() {
                       <option key={prof._id} value={prof._id}>{prof.nombre}</option>
                     ))}
                   </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Si no encuentras tu profesion, selecciona "Otra".
+                  </p>
                 </div>
+
+                {profesionEsOtraEdicion && (
+                  <div>
+                    <label className="block mb-1">¿Cual otra profesion?</label>
+                    <input
+                      type="text"
+                      name="otraProfesionTexto"
+                      value={formData.otraProfesionTexto}
+                      onChange={handleChange}
+                      placeholder="Ej. Paisajista"
+                      className="w-full p-2 border rounded"
+                      autoComplete="off"
+                      required
+                    />
+                  </div>
+                )}
               </>
             )}
 
@@ -658,6 +763,20 @@ function PanelExperto() {
                 </label>
               </div>
             </div>
+
+            {formData.atiendeVirtual && experto.rol !== 'cliente' && (
+              <div>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="coberturaVirtualNacional"
+                    checked={formData.coberturaVirtualNacional}
+                    onChange={handleChange}
+                  />
+                  Mi servicio virtual cubre toda Colombia
+                </label>
+              </div>
+            )}
 
             <div>
               <label className="block mb-1">Ciudades donde atiendes</label>

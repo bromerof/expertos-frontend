@@ -10,6 +10,7 @@ function PerfilExperto() {
   const [calificaciones, setCalificaciones] = useState(null)
   const [mostrarAvisoCalificar, setMostrarAvisoCalificar] = useState(false)
   const [error, setError] = useState('')
+  const esPerfilPropio = localStorage.getItem('expertoId') === id
 
   useEffect(() => {
     setError('')
@@ -91,7 +92,13 @@ function PerfilExperto() {
             Miembro desde: {new Date(experto.fechaCreacion).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
           <p>Categoría: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>
+          {experto.otraCategoriaTexto && (
+            <p>¿Que otra categoria?: {experto.otraCategoriaTexto}</p>
+          )}
           <p>Profesión: {experto.profesion && experto.profesion.nombre}</p>
+          {experto.otraProfesionTexto && (
+            <p>¿Cual otra profesion?: {experto.otraProfesionTexto}</p>
+          )}
 
           {experto.ubicaciones && experto.ubicaciones.length > 0 && (
             <p>Ubicaciones: {experto.ubicaciones.map(u => u.nombre).join(', ')}</p>
@@ -141,12 +148,14 @@ function PerfilExperto() {
             </div>
           )}
 
-          <button
-            onClick={handleContactar}
-            className="mt-4 px-6 py-3 bg-[#25D366] text-white rounded font-bold cursor-pointer hover:bg-[#1ebe57]"
-          >
-            Contactar por WhatsApp
-          </button>
+          {!esPerfilPropio && (
+            <button
+              onClick={handleContactar}
+              className="mt-4 px-6 py-3 bg-[#25D366] text-white rounded font-bold cursor-pointer hover:bg-[#1ebe57]"
+            >
+              Contactar por WhatsApp
+            </button>
+          )}
 
           {mostrarAvisoCalificar && (
             <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded max-w-md">

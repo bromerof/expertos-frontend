@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { API_URL } from '../config'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import Header from './Header'
 
 function RegistroExperto() {
@@ -16,7 +16,9 @@ function RegistroExperto() {
     atiendeVirtual: false,
     coberturaVirtualNacional: false,
     tipoDocumento: 'CC',
-    numeroDocumento: ''
+    numeroDocumento: '',
+    otraCategoriaTexto: '',
+    otraProfesionTexto: ''
   })
 
   const [departamentos, setDepartamentos] = useState([])
@@ -31,6 +33,10 @@ function RegistroExperto() {
   const [profesionId, setProfesionId] = useState('')
 
   const [error, setError] = useState('')
+  const [aceptaTerminos, setAceptaTerminos] = useState(false)
+  const [aceptaDatos, setAceptaDatos] = useState(false)
+  const [aceptaReglas, setAceptaReglas] = useState(false)
+  const [aceptaComunicaciones, setAceptaComunicaciones] = useState(false)
 
   useEffect(() => {
     fetch(API_URL + '/api/departamentos')
@@ -109,6 +115,16 @@ function RegistroExperto() {
     setProfesionId(nuevaProfesionId)
   }
 
+  const profesionSeleccionada = (profesionesPorCategoria[categoriaId] || [])
+    .find(p => p._id === profesionId)
+  const categoriaSeleccionada = categorias.find(c => c._id === categoriaId)
+  const categoriaEsOtra = Boolean(
+    categoriaSeleccionada && categoriaSeleccionada.nombre.trim().toLowerCase() === 'otra'
+  )
+  const profesionEsOtra = Boolean(
+    profesionSeleccionada && profesionSeleccionada.nombre.trim().toLowerCase() === 'otra'
+  )
+
   const handleSubmit = (e) => {
     e.preventDefault()
     setError('')
@@ -117,6 +133,16 @@ function RegistroExperto() {
 
     if (!profesionId) {
       setError('Debes seleccionar una categoria y una profesion')
+      return
+    }
+
+    if (categoriaEsOtra && !formData.otraCategoriaTexto.trim()) {
+      setError('Debes indicar cual es tu categoria especifica')
+      return
+    }
+
+    if (profesionEsOtra && !formData.otraProfesionTexto.trim()) {
+      setError('Debes indicar cual es tu profesion especifica')
       return
     }
 
@@ -129,7 +155,20 @@ function RegistroExperto() {
       return
     }
 
-    const datosCompletos = { ...formData, ubicaciones: idsMunicipios, profesion: profesionId }
+    if (!aceptaTerminos || !aceptaDatos || !aceptaReglas) {
+      setError('Debes aceptar los Terminos de Uso, la Politica de Tratamiento de Datos y las Reglas para Expertos')
+      return
+    }
+
+    const datosCompletos = {
+      ...formData,
+      ubicaciones: idsMunicipios,
+      profesion: profesionId,
+      terminosAceptados: aceptaTerminos,
+      datosAceptados: aceptaDatos,
+      reglasAceptadas: aceptaReglas,
+      comunicacionesAceptadas: aceptaComunicaciones
+    }
 
     fetch(API_URL + '/api/auth/registro', {
       method: 'POST',
@@ -143,9 +182,9 @@ function RegistroExperto() {
         }
         return data
       })
-      .then((expertoCreado) => {
+      .then(() => {
         alert('Registro exitoso! Ahora puedes iniciar sesion.')
-        navigate('/experto/' + expertoCreado._id)
+        navigate('/login')
       })
       .catch((err) => {
         setError(err.message)
@@ -163,7 +202,7 @@ function RegistroExperto() {
           <p className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</p>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" autoComplete="off">
           <div>
             <label className="block mb-1">Nombre completo</label>
             <input
@@ -172,6 +211,7 @@ function RegistroExperto() {
               value={formData.nombre}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+              autoComplete="off"
               required
             />
           </div>
@@ -188,7 +228,26 @@ function RegistroExperto() {
                 <option key={cat._id} value={cat._id}>{cat.nombre}</option>
               ))}
             </select>
+            <p className="text-xs text-gray-500 mt-1">
+              Si no encuentras tu categoria, selecciona "Otra".
+            </p>
           </div>
+
+          {categoriaEsOtra && (
+            <div>
+              <label className="block mb-1">¿Que otra categoria?</label>
+              <input
+                type="text"
+                name="otraCategoriaTexto"
+                value={formData.otraCategoriaTexto}
+                onChange={handleChange}
+                placeholder="Ej. Diseñador de paisajes"
+                className="w-full p-2 border rounded"
+                autoComplete="off"
+                required
+              />
+            </div>
+          )}
 
           <div>
             <label className="block mb-1">Profesion especifica</label>
@@ -203,7 +262,29 @@ function RegistroExperto() {
                 <option key={prof._id} value={prof._id}>{prof.nombre}</option>
               ))}
             </select>
+            <p className="text-xs text-gray-500 mt-1">
+              Si no encuentras tu profesion, selecciona "Otra".
+            </p>
           </div>
+
+          {profesionEsOtra && (
+            <div>
+              <label className="block mb-1">¿Cual otra profesion?</label>
+              <input
+                type="text"
+                name="otraProfesionTexto"
+                value={formData.otraProfesionTexto}
+                onChange={handleChange}
+                placeholder="Ej. Paisajista"
+                className="w-full p-2 border rounded"
+                autoComplete="off"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Este texto ayuda a que los clientes te encuentren cuando busquen justo lo que haces.
+              </p>
+            </div>
+          )}
 
           <div>
             <label className="block mb-1">Descripcion</label>
@@ -322,6 +403,7 @@ function RegistroExperto() {
               value={formData.numeroDocumento}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+              autoComplete="off"
               required
             />
           </div>
@@ -334,6 +416,7 @@ function RegistroExperto() {
               value={formData.whatsapp}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+              autoComplete="off"
               required
             />
           </div>
@@ -346,6 +429,7 @@ function RegistroExperto() {
               value={formData.correo}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+              autoComplete="off"
               required
             />
           </div>
@@ -358,6 +442,7 @@ function RegistroExperto() {
               value={formData.contraseña}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+              autoComplete="off"
               required
             />
           </div>
@@ -370,7 +455,67 @@ function RegistroExperto() {
               value={formData.anosExperiencia}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+              autoComplete="off"
             />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                checked={aceptaTerminos}
+                onChange={(e) => setAceptaTerminos(e.target.checked)}
+                className="mt-1"
+              />
+              <span>
+                Acepto los{' '}
+                <Link to="/terminos" target="_blank" rel="noopener noreferrer" className="text-[#2C3E50] underline">
+                  Terminos de Uso
+                </Link>
+                .
+              </span>
+            </label>
+            <label className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                checked={aceptaDatos}
+                onChange={(e) => setAceptaDatos(e.target.checked)}
+                className="mt-1"
+              />
+              <span>
+                He leido y acepto la{' '}
+                <Link to="/politica-datos" target="_blank" rel="noopener noreferrer" className="text-[#2C3E50] underline">
+                  Politica de Tratamiento de Datos Personales
+                </Link>
+                .
+              </span>
+            </label>
+            <label className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                checked={aceptaReglas}
+                onChange={(e) => setAceptaReglas(e.target.checked)}
+                className="mt-1"
+              />
+              <span>
+                Acepto las{' '}
+                <Link to="/reglas-expertos" target="_blank" rel="noopener noreferrer" className="text-[#2C3E50] underline">
+                  Reglas para Expertos
+                </Link>
+                {' '}y declaro que la informacion profesional proporcionada es verdadera.
+              </span>
+            </label>
+            <label className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                checked={aceptaComunicaciones}
+                onChange={(e) => setAceptaComunicaciones(e.target.checked)}
+                className="mt-1"
+              />
+              <span>
+                Autorizo el envio de comunicaciones comerciales, promociones y novedades de Expertos (opcional).
+              </span>
+            </label>
           </div>
 
           <button

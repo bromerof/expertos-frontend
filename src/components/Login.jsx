@@ -33,12 +33,10 @@ function Login() {
         localStorage.setItem('expertoId', data.experto.id)
         localStorage.setItem('rol', data.experto.rol)
 
-        if (data.experto.rol === 'cliente') {
-          navigate('/panel')
-        } else if (data.experto.rol === 'admin') {
+        if (data.experto.rol === 'admin') {
           navigate('/admin')
         } else {
-          navigate('/experto/' + data.experto.id)
+          navigate('/panel')
         }
       })
       .catch((err) => {
@@ -57,7 +55,7 @@ function Login() {
           <p className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</p>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" autoComplete="off">
           <div>
             <label className="block mb-1">Correo electronico</label>
             <input
@@ -65,6 +63,7 @@ function Login() {
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
               className="w-full p-2 border rounded"
+              autoComplete="off"
               required
             />
           </div>
@@ -76,6 +75,7 @@ function Login() {
               value={contrasena}
               onChange={(e) => setContrasena(e.target.value)}
               className="w-full p-2 border rounded"
+              autoComplete="off"
               required
             />
           </div>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { API_URL } from '../config'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import Header from './Header'
 
 function RegistroCliente() {
@@ -16,6 +16,10 @@ function RegistroCliente() {
     atiendeVirtual: false,
     coberturaVirtualNacional: false
   })
+
+  const [aceptaTerminos, setAceptaTerminos] = useState(false)
+  const [aceptaDatos, setAceptaDatos] = useState(false)
+  const [aceptaComunicaciones, setAceptaComunicaciones] = useState(false)
 
   const [departamentos, setDepartamentos] = useState([])
   const [municipiosPorDepartamento, setMunicipiosPorDepartamento] = useState({})
@@ -70,10 +74,18 @@ function RegistroCliente() {
       return
     }
 
+    if (!aceptaTerminos || !aceptaDatos) {
+      setError('Debes aceptar los Terminos de Uso y autorizar el tratamiento de tus datos personales')
+      return
+    }
+
     const datosCompletos = {
       ...formData,
       ubicaciones: municipioId ? [municipioId] : [],
-      rol: 'cliente'
+      rol: 'cliente',
+      terminosAceptados: aceptaTerminos,
+      datosAceptados: aceptaDatos,
+      comunicacionesAceptadas: aceptaComunicaciones
     }
 
     fetch(API_URL + '/api/auth/registro', {
@@ -108,7 +120,7 @@ function RegistroCliente() {
           <p className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</p>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4" autoComplete="off">
           <div>
             <label className="block mb-1">Nombre completo</label>
             <input
@@ -117,6 +129,7 @@ function RegistroCliente() {
               value={formData.nombre}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+              autoComplete="off"
               required
             />
           </div>
@@ -143,6 +156,7 @@ function RegistroCliente() {
               value={formData.numeroDocumento}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+              autoComplete="off"
               required
             />
           </div>
@@ -155,6 +169,7 @@ function RegistroCliente() {
               value={formData.correo}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+              autoComplete="off"
               required
             />
           </div>
@@ -167,6 +182,7 @@ function RegistroCliente() {
               value={formData.whatsapp}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+              autoComplete="off"
               required
             />
           </div>
@@ -179,6 +195,7 @@ function RegistroCliente() {
               value={formData.contraseña}
               onChange={handleChange}
               className="w-full p-2 border rounded"
+              autoComplete="off"
               required
             />
           </div>
@@ -247,6 +264,50 @@ function RegistroCliente() {
                 ))}
               </select>
             </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                checked={aceptaTerminos}
+                onChange={(e) => setAceptaTerminos(e.target.checked)}
+                className="mt-1"
+              />
+              <span>
+                Acepto los{' '}
+                <Link to="/terminos" target="_blank" rel="noopener noreferrer" className="text-[#2C3E50] underline">
+                  Terminos de Uso
+                </Link>
+                .
+              </span>
+            </label>
+            <label className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                checked={aceptaDatos}
+                onChange={(e) => setAceptaDatos(e.target.checked)}
+                className="mt-1"
+              />
+              <span>
+                He leido y acepto la{' '}
+                <Link to="/politica-datos" target="_blank" rel="noopener noreferrer" className="text-[#2C3E50] underline">
+                  Politica de Tratamiento de Datos Personales
+                </Link>
+                .
+              </span>
+            </label>
+            <label className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                checked={aceptaComunicaciones}
+                onChange={(e) => setAceptaComunicaciones(e.target.checked)}
+                className="mt-1"
+              />
+              <span>
+                Autorizo el envio de comunicaciones comerciales, promociones y novedades de Expertos (opcional).
+              </span>
+            </label>
           </div>
 
           <button
