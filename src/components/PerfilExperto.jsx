@@ -87,7 +87,14 @@ function PerfilExperto() {
 
         {/* Info */}
         <div>
-          <h2 className="text-2xl font-bold">{experto.nombre}</h2>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            {experto.nombre}
+            {experto.plan === 'pro' && (
+              <span className="px-2 py-0.5 bg-yellow-400 text-[#2C3E50] text-xs font-bold rounded-full">
+                ⭐ Pro
+              </span>
+            )}
+          </h2>
           <p className="text-sm text-gray-500">
             Miembro desde: {new Date(experto.fechaCreacion).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>

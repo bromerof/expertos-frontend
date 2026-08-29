@@ -539,7 +539,14 @@ function PanelExperto() {
                 Ubicaciones: {experto.ubicaciones && experto.ubicaciones.map(u => u.nombre).join(', ')}
               </p>
               {experto.rol !== 'cliente' && (
-                <p>Plan: {experto.plan}</p>
+                <p className="flex items-center gap-2">
+                  Plan: {experto.plan}
+                  {experto.plan === 'pro' && (
+                    <span className="px-2 py-0.5 bg-yellow-400 text-[#2C3E50] text-xs font-bold rounded-full">
+                      ⭐ Pro
+                    </span>
+                  )}
+                </p>
               )}
 
                              {experto.rol !== 'cliente' && (

@@ -179,11 +179,20 @@ function Buscar() {
               <Link
                 key={experto._id}
                 to={'/experto/' + experto._id}
-                className="bg-white p-4 rounded shadow w-64 block hover:shadow-lg transition cursor-pointer"
+                className="bg-white p-4 rounded shadow w-64 block hover:shadow-lg transition cursor-pointer relative"
               >
+                {experto.plan === 'pro' && (
+                  <span className="absolute top-2 right-2 px-2 py-0.5 bg-yellow-400 text-[#2C3E50] text-xs font-bold rounded-full">
+                    ⭐ Pro
+                  </span>
+                )}
                 <div className="w-16 h-16 rounded-full bg-gray-300 mb-2"></div>
                 <p className="font-bold">{experto.nombre}</p>
-                <p className="text-gray-500">{experto.profesion && experto.profesion.nombre}</p>
+                <p className="text-gray-500">
+                  {experto.profesion && experto.profesion.nombre.trim().toLowerCase() === 'otra' && experto.otraProfesionTexto
+                    ? experto.otraProfesionTexto
+                    : experto.profesion && experto.profesion.nombre}
+                </p>
                 <button
                   onClick={(e) => handleContactar(e, experto._id)}
                   className="mt-2 px-3 py-1 bg-[#25D366] text-white rounded cursor-pointer hover:bg-[#1ebe57]"
