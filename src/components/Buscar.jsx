@@ -192,6 +192,9 @@ function Buscar() {
                   {experto.profesion && experto.profesion.nombre.trim().toLowerCase() === 'otra' && experto.otraProfesionTexto
                     ? experto.otraProfesionTexto
                     : experto.profesion && experto.profesion.nombre}
+                  {experto.profesionesAdicionales && experto.profesionesAdicionales.length > 0 && (
+                    <span className="text-xs text-gray-400"> +{experto.profesionesAdicionales.length} más</span>
+                  )}
                 </p>
                 <button
                   onClick={(e) => handleContactar(e, experto._id)}

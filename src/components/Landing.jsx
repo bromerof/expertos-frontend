@@ -74,7 +74,7 @@ function Landing() {
             Iniciar sesión
           </Link>
           <Link to="/registro-cliente" className="text-white underline cursor-pointer hover:text-gray-300">
-            Registrarme
+            Registrarme como cliente
           </Link>
           <button
             onClick={handleSoporte}
@@ -312,8 +312,11 @@ function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#2C3E50] text-white text-center py-6 text-sm">
-        <p>© {new Date().getFullYear()} EXPERTOS. Todos los derechos reservados.</p>
+      <footer className="bg-[#2C3E50] text-white text-center py-8 text-sm">
+        <Link to="/preguntas-frecuentes" className="text-base font-bold underline hover:text-gray-300">
+          Preguntas frecuentes
+        </Link>
+        <p className="mt-3 text-gray-300">© {new Date().getFullYear()} EXPERTOS. Todos los derechos reservados.</p>
       </footer>
     </div>
   )

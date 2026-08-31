@@ -11,6 +11,7 @@ import Calificar from './components/Calificar'
 import Terminos from './components/Terminos'
 import PoliticaDatos from './components/PoliticaDatos'
 import ReglasExpertos from './components/ReglasExpertos'
+import PreguntasFrecuentes from './components/PreguntasFrecuentes'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       <Route path="/terminos" element={<Terminos />} />
       <Route path="/politica-datos" element={<PoliticaDatos />} />
       <Route path="/reglas-expertos" element={<ReglasExpertos />} />
+      <Route path="/preguntas-frecuentes" element={<PreguntasFrecuentes />} />
     </Routes>
   )
 }

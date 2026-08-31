@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { API_URL } from '../config'
 import Header from './Header'
 import Insignias from './Insignias'
+import SelectorProfesion from './SelectorProfesion'
 
 function PanelExperto() {
   const navigate = useNavigate()
@@ -25,10 +26,13 @@ function PanelExperto() {
   const [departamentos, setDepartamentos] = useState([])
   const [municipiosPorDepartamento, setMunicipiosPorDepartamento] = useState({})
 
-  const [categorias, setCategorias] = useState([])
-  const [profesionesPorCategoria, setProfesionesPorCategoria] = useState({})
+  const [todasLasProfesiones, setTodasLasProfesiones] = useState([])
   const [categoriaId, setCategoriaId] = useState('')
   const [profesionId, setProfesionId] = useState('')
+
+  // Profesiones adicionales: solo aplica si el plan es Pro. Cada elemento es
+  // el _id de la profesion elegida.
+  const [profesionesAdicionales, setProfesionesAdicionales] = useState([])
 
   const [numeroBusqueda, setNumeroBusqueda] = useState('')
   const [resultadoBusqueda, setResultadoBusqueda] = useState(null)
@@ -50,10 +54,10 @@ function PanelExperto() {
       .then(data => setDepartamentos(data))
       .catch(err => console.error('Error al cargar departamentos:', err))
 
-    fetch(API_URL + '/api/categorias')
+    fetch(API_URL + '/api/profesiones')
       .then(res => res.json())
-      .then(data => setCategorias(data))
-      .catch(err => console.error('Error al cargar categorias:', err))
+      .then(data => setTodasLasProfesiones(data))
+      .catch(err => console.error('Error al cargar profesiones:', err))
   }, [expertoId, token, navigate])
 
   const cargarExperto = () => {
@@ -109,18 +113,6 @@ function PanelExperto() {
       .catch(err => console.error('Error al cargar municipios:', err))
   }
 
-  const cargarProfesiones = (categoriaId) => {
-    if (profesionesPorCategoria[categoriaId]) {
-      return
-    }
-    fetch(API_URL + '/api/profesiones?categoria=' + categoriaId)
-      .then(res => res.json())
-      .then(data => {
-        setProfesionesPorCategoria((prev) => ({ ...prev, [categoriaId]: data }))
-      })
-      .catch(err => console.error('Error al cargar profesiones:', err))
-  }
-
   const iniciarEdicion = () => {
     if (experto.ubicaciones && experto.ubicaciones.length > 0) {
       const ubicacionesIniciales = experto.ubicaciones.map((u) => {
@@ -135,15 +127,20 @@ function PanelExperto() {
       setUbicaciones([{ departamentoId: '', municipioId: '' }])
     }
 
-    // Precargamos la categoria y profesion actuales del experto
-    if (experto.profesion && experto.profesion.categoria) {
-      const categoriaActualId = experto.profesion.categoria._id
-      setCategoriaId(categoriaActualId)
+    // Precargamos la profesion actual del experto
+    if (experto.profesion) {
+      setCategoriaId(experto.profesion.categoria ? experto.profesion.categoria._id : '')
       setProfesionId(experto.profesion._id)
-      cargarProfesiones(categoriaActualId)
     } else {
       setCategoriaId('')
       setProfesionId('')
+    }
+
+    // Precargamos las profesiones adicionales (solo aplica si es Pro)
+    if (experto.profesionesAdicionales && experto.profesionesAdicionales.length > 0) {
+      setProfesionesAdicionales(experto.profesionesAdicionales.map((p) => p._id))
+    } else {
+      setProfesionesAdicionales([])
     }
 
     setEditando(true)
@@ -178,26 +175,45 @@ function PanelExperto() {
     setUbicaciones(nuevas)
   }
 
-  const handleCategoriaChange = (nuevaCategoriaId) => {
-    setCategoriaId(nuevaCategoriaId)
-    setProfesionId('')
-    if (nuevaCategoriaId) {
-      cargarProfesiones(nuevaCategoriaId)
+  const handleSeleccionarProfesion = (profesion) => {
+    if (!profesion) {
+      setProfesionId('')
+      setCategoriaId('')
+      return
     }
+    setProfesionId(profesion._id)
+    setCategoriaId(profesion.categoria ? profesion.categoria._id : '')
   }
 
-  const handleProfesionChange = (nuevaProfesionId) => {
-    setProfesionId(nuevaProfesionId)
+  const handleSeleccionarProfesionAdicional = (index, profesion) => {
+    const nuevas = [...profesionesAdicionales]
+    nuevas[index] = profesion ? profesion._id : ''
+    setProfesionesAdicionales(nuevas)
   }
 
-  const profesionSeleccionadaEdicion = (profesionesPorCategoria[categoriaId] || [])
-    .find(p => p._id === profesionId)
-  const categoriaSeleccionadaEdicion = categorias.find(c => c._id === categoriaId)
-  const categoriaEsOtraEdicion = Boolean(
-    categoriaSeleccionadaEdicion && categoriaSeleccionadaEdicion.nombre.trim().toLowerCase() === 'otra'
+  const agregarProfesionAdicional = () => {
+    setProfesionesAdicionales([...profesionesAdicionales, ''])
+  }
+
+  const quitarProfesionAdicional = (index) => {
+    const nuevas = profesionesAdicionales.filter((_, i) => i !== index)
+    setProfesionesAdicionales(nuevas)
+  }
+
+  const profesionSeleccionadaEdicion = todasLasProfesiones.find(p => p._id === profesionId)
+
+  // Revisamos "Otra" tanto en la profesion principal como en las adicionales,
+  // ya que el campo de especialidad especifica aplica para cualquiera de ellas
+  const todasLasProfesionesElegidas = [
+    profesionSeleccionadaEdicion,
+    ...profesionesAdicionales.map((id) => todasLasProfesiones.find(p => p._id === id))
+  ].filter(Boolean)
+
+  const categoriaEsOtraEdicion = todasLasProfesionesElegidas.some(
+    (p) => p.categoria && p.categoria.nombre.trim().toLowerCase() === 'otra'
   )
-  const profesionEsOtraEdicion = Boolean(
-    profesionSeleccionadaEdicion && profesionSeleccionadaEdicion.nombre.trim().toLowerCase() === 'otra'
+  const profesionEsOtraEdicion = todasLasProfesionesElegidas.some(
+    (p) => p.nombre.trim().toLowerCase() === 'otra'
   )
 
   const handleGuardar = (e) => {
@@ -209,18 +225,12 @@ function PanelExperto() {
       return
     }
 
-    const profesionSeleccionada = (profesionesPorCategoria[categoriaId] || [])
-      .find(p => p._id === profesionId)
-    const categoriaSeleccionada = categorias.find(c => c._id === categoriaId)
-    const categoriaEsOtra = categoriaSeleccionada && categoriaSeleccionada.nombre.trim().toLowerCase() === 'otra'
-    const profesionEsOtra = profesionSeleccionada && profesionSeleccionada.nombre.trim().toLowerCase() === 'otra'
-
-    if (categoriaEsOtra && !formData.otraCategoriaTexto.trim()) {
+    if (categoriaEsOtraEdicion && !formData.otraCategoriaTexto.trim()) {
       setError('Debes indicar cual es tu categoria especifica')
       return
     }
 
-    if (profesionEsOtra && !formData.otraProfesionTexto.trim()) {
+    if (profesionEsOtraEdicion && !formData.otraProfesionTexto.trim()) {
       setError('Debes indicar cual es tu profesion especifica')
       return
     }
@@ -237,6 +247,9 @@ function PanelExperto() {
     const datosCompletos = { ...formData, ubicaciones: idsMunicipios }
     if (profesionId) {
       datosCompletos.profesion = profesionId
+    }
+    if (experto.plan === 'pro') {
+      datosCompletos.profesionesAdicionales = profesionesAdicionales.filter(id => id !== '')
     }
 
     fetch(API_URL + '/api/expertos/' + expertoId, {
@@ -488,6 +501,22 @@ function PanelExperto() {
           </div>
         )}
 
+        {experto.rol === 'experto' && experto.verificado && experto.plan === 'gratuito' && (
+          <div className="mb-4 p-4 bg-[#2C3E50] rounded max-w-lg text-white">
+            <p className="font-bold mb-2">
+              ⭐ Haz que mas clientes te encuentren con EXPERTOS Pro
+            </p>
+            <ul className="text-sm list-disc list-inside mb-2 space-y-1">
+              <li>Apareces primero en los resultados de busqueda</li>
+              <li>Sello "Pro" visible en tu perfil y tarjeta</li>
+              <li>Puedes publicar varias profesiones en tu cuenta</li>
+            </ul>
+            <p className="text-xs text-gray-300">
+              Muy pronto podras activar tu plan Pro directamente desde aqui.
+            </p>
+          </div>
+        )}
+
         {!editando ? (
           <div className="flex gap-6">
                        <div className="flex flex-col items-center gap-2">
@@ -532,6 +561,11 @@ function PanelExperto() {
                   <p>Profesion: {experto.profesion && experto.profesion.nombre}</p>
                   {experto.otraProfesionTexto && (
                     <p>¿Cual otra profesion?: {experto.otraProfesionTexto}</p>
+                  )}
+                  {experto.profesionesAdicionales && experto.profesionesAdicionales.length > 0 && (
+                    <p>
+                      Tambien: {experto.profesionesAdicionales.map(p => p.nombre).join(', ')}
+                    </p>
                   )}
                 </>
               )}
@@ -667,19 +701,15 @@ function PanelExperto() {
             {experto.rol !== 'cliente' && (
               <>
                 <div>
-                  <label className="block mb-1">Categoria</label>
-                  <select
-                    value={categoriaId}
-                    onChange={(e) => handleCategoriaChange(e.target.value)}
-                    className="w-full p-2 border rounded"
-                  >
-                    <option value="">Selecciona una categoria</option>
-                    {categorias.map((cat) => (
-                      <option key={cat._id} value={cat._id}>{cat.nombre}</option>
-                    ))}
-                  </select>
+                  <label className="block mb-1">Profesion</label>
+                  <SelectorProfesion
+                    todasLasProfesiones={todasLasProfesiones}
+                    valorProfesionId={profesionId}
+                    onSeleccionar={handleSeleccionarProfesion}
+                    placeholder="Ej. Plomero, Contador, Fotografo..."
+                  />
                   <p className="text-xs text-gray-500 mt-1">
-                    Si no encuentras tu categoria, selecciona "Otra".
+                    Escribe para buscar. Si no encuentras tu profesion, busca "Otra".
                   </p>
                 </div>
 
@@ -699,24 +729,6 @@ function PanelExperto() {
                   </div>
                 )}
 
-                <div>
-                  <label className="block mb-1">Profesion especifica</label>
-                  <select
-                    value={profesionId}
-                    onChange={(e) => handleProfesionChange(e.target.value)}
-                    className="w-full p-2 border rounded"
-                    disabled={!categoriaId}
-                  >
-                    <option value="">Selecciona una profesion</option>
-                    {(profesionesPorCategoria[categoriaId] || []).map((prof) => (
-                      <option key={prof._id} value={prof._id}>{prof.nombre}</option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Si no encuentras tu profesion, selecciona "Otra".
-                  </p>
-                </div>
-
                 {profesionEsOtraEdicion && (
                   <div>
                     <label className="block mb-1">¿Cual otra profesion?</label>
@@ -731,6 +743,47 @@ function PanelExperto() {
                       required
                     />
                   </div>
+                )}
+
+                {experto.plan === 'pro' ? (
+                  <div>
+                    <label className="block mb-1">
+                      Profesiones adicionales{' '}
+                      <span className="px-2 py-0.5 bg-yellow-400 text-[#2C3E50] text-xs font-bold rounded-full">
+                        ⭐ Pro
+                      </span>
+                    </label>
+                    {profesionesAdicionales.map((idProfesionAdicional, index) => (
+                      <div key={index} className="flex gap-2 mb-2 items-start">
+                        <div className="flex-1">
+                          <SelectorProfesion
+                            todasLasProfesiones={todasLasProfesiones}
+                            valorProfesionId={idProfesionAdicional}
+                            onSeleccionar={(p) => handleSeleccionarProfesionAdicional(index, p)}
+                            placeholder="Busca otra profesion..."
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => quitarProfesionAdicional(index)}
+                          className="px-3 py-2 bg-gray-300 rounded cursor-pointer hover:bg-gray-400"
+                        >
+                          Quitar
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={agregarProfesionAdicional}
+                      className="text-[#2C3E50] underline text-sm cursor-pointer hover:text-[#1a252f]"
+                    >
+                      + Agregar otra profesion
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-500">
+                    Con el plan Pro puedes publicar varias profesiones en tu perfil.
+                  </p>
                 )}
               </>
             )}

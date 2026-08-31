@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { API_URL } from '../config'
 import { useNavigate, Link } from 'react-router-dom'
 import Header from './Header'
+import SelectorProfesion from './SelectorProfesion'
 
 function RegistroExperto() {
   const navigate = useNavigate()
@@ -27,8 +28,7 @@ function RegistroExperto() {
   // Cada fila de ubicacion: { departamentoId, municipioId }
   const [ubicaciones, setUbicaciones] = useState([{ departamentoId: '', municipioId: '' }])
 
-  const [categorias, setCategorias] = useState([])
-  const [profesionesPorCategoria, setProfesionesPorCategoria] = useState({})
+  const [todasLasProfesiones, setTodasLasProfesiones] = useState([])
   const [categoriaId, setCategoriaId] = useState('')
   const [profesionId, setProfesionId] = useState('')
 
@@ -44,10 +44,10 @@ function RegistroExperto() {
       .then(data => setDepartamentos(data))
       .catch(err => console.error('Error al cargar departamentos:', err))
 
-    fetch(API_URL + '/api/categorias')
+    fetch(API_URL + '/api/profesiones')
       .then(res => res.json())
-      .then(data => setCategorias(data))
-      .catch(err => console.error('Error al cargar categorias:', err))
+      .then(data => setTodasLasProfesiones(data))
+      .catch(err => console.error('Error al cargar profesiones:', err))
   }, [])
 
   const cargarMunicipios = (departamentoId) => {
@@ -62,16 +62,14 @@ function RegistroExperto() {
       .catch(err => console.error('Error al cargar municipios:', err))
   }
 
-  const cargarProfesiones = (categoriaId) => {
-    if (profesionesPorCategoria[categoriaId]) {
+  const handleSeleccionarProfesion = (profesion) => {
+    if (!profesion) {
+      setProfesionId('')
+      setCategoriaId('')
       return
     }
-    fetch(API_URL + '/api/profesiones?categoria=' + categoriaId)
-      .then(res => res.json())
-      .then(data => {
-        setProfesionesPorCategoria((prev) => ({ ...prev, [categoriaId]: data }))
-      })
-      .catch(err => console.error('Error al cargar profesiones:', err))
+    setProfesionId(profesion._id)
+    setCategoriaId(profesion.categoria ? profesion.categoria._id : '')
   }
 
   const handleChange = (e) => {
@@ -103,23 +101,10 @@ function RegistroExperto() {
     setUbicaciones(nuevas)
   }
 
-  const handleCategoriaChange = (nuevaCategoriaId) => {
-    setCategoriaId(nuevaCategoriaId)
-    setProfesionId('')
-    if (nuevaCategoriaId) {
-      cargarProfesiones(nuevaCategoriaId)
-    }
-  }
-
-  const handleProfesionChange = (nuevaProfesionId) => {
-    setProfesionId(nuevaProfesionId)
-  }
-
-  const profesionSeleccionada = (profesionesPorCategoria[categoriaId] || [])
-    .find(p => p._id === profesionId)
-  const categoriaSeleccionada = categorias.find(c => c._id === categoriaId)
+  const profesionSeleccionada = todasLasProfesiones.find(p => p._id === profesionId)
   const categoriaEsOtra = Boolean(
-    categoriaSeleccionada && categoriaSeleccionada.nombre.trim().toLowerCase() === 'otra'
+    profesionSeleccionada && profesionSeleccionada.categoria &&
+    profesionSeleccionada.categoria.nombre.trim().toLowerCase() === 'otra'
   )
   const profesionEsOtra = Boolean(
     profesionSeleccionada && profesionSeleccionada.nombre.trim().toLowerCase() === 'otra'
@@ -217,19 +202,15 @@ function RegistroExperto() {
           </div>
 
           <div>
-            <label className="block mb-1">Categoria</label>
-            <select
-              value={categoriaId}
-              onChange={(e) => handleCategoriaChange(e.target.value)}
-              className="w-full p-2 border rounded"
-            >
-              <option value="">Selecciona una categoria</option>
-              {categorias.map((cat) => (
-                <option key={cat._id} value={cat._id}>{cat.nombre}</option>
-              ))}
-            </select>
+            <label className="block mb-1">Profesion</label>
+            <SelectorProfesion
+              todasLasProfesiones={todasLasProfesiones}
+              valorProfesionId={profesionId}
+              onSeleccionar={handleSeleccionarProfesion}
+              placeholder="Ej. Plomero, Contador, Fotografo..."
+            />
             <p className="text-xs text-gray-500 mt-1">
-              Si no encuentras tu categoria, selecciona "Otra".
+              Escribe para buscar. Si no encuentras tu profesion, busca "Otra".
             </p>
           </div>
 
@@ -248,24 +229,6 @@ function RegistroExperto() {
               />
             </div>
           )}
-
-          <div>
-            <label className="block mb-1">Profesion especifica</label>
-            <select
-              value={profesionId}
-              onChange={(e) => handleProfesionChange(e.target.value)}
-              className="w-full p-2 border rounded"
-              disabled={!categoriaId}
-            >
-              <option value="">Selecciona una profesion</option>
-              {(profesionesPorCategoria[categoriaId] || []).map((prof) => (
-                <option key={prof._id} value={prof._id}>{prof.nombre}</option>
-              ))}
-            </select>
-            <p className="text-xs text-gray-500 mt-1">
-              Si no encuentras tu profesion, selecciona "Otra".
-            </p>
-          </div>
 
           {profesionEsOtra && (
             <div>

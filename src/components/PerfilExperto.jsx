@@ -106,6 +106,11 @@ function PerfilExperto() {
           {experto.otraProfesionTexto && (
             <p>¿Cual otra profesion?: {experto.otraProfesionTexto}</p>
           )}
+          {experto.profesionesAdicionales && experto.profesionesAdicionales.length > 0 && (
+            <p>
+              Tambien: {experto.profesionesAdicionales.map(p => p.nombre).join(', ')}
+            </p>
+          )}
 
           {experto.ubicaciones && experto.ubicaciones.length > 0 && (
             <p>Ubicaciones: {experto.ubicaciones.map(u => u.nombre).join(', ')}</p>

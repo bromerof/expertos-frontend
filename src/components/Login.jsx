@@ -94,6 +94,9 @@ function Login() {
               <option value="cliente">Entrar como Cliente</option>
               <option value="admin">Entrar como Administrador</option>
             </select>
+            <p className="text-xs text-gray-500 mt-1">
+              Selecciona el tipo de cuenta con la que quieres iniciar sesion.
+            </p>
           </div>
 
                     <button
