@@ -12,6 +12,8 @@ import Terminos from './components/Terminos'
 import PoliticaDatos from './components/PoliticaDatos'
 import ReglasExpertos from './components/ReglasExpertos'
 import PreguntasFrecuentes from './components/PreguntasFrecuentes'
+import PublicarNecesidad from './components/PublicarNecesidad'
+import Oportunidades from './components/Oportunidades'
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
       <Route path="/politica-datos" element={<PoliticaDatos />} />
       <Route path="/reglas-expertos" element={<ReglasExpertos />} />
       <Route path="/preguntas-frecuentes" element={<PreguntasFrecuentes />} />
+      <Route path="/publicar-necesidad" element={<PublicarNecesidad />} />
+      <Route path="/oportunidades" element={<Oportunidades />} />
     </Routes>
   )
 }

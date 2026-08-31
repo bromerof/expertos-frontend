@@ -27,15 +27,25 @@ function Header({ children }) {
       </div>
       <div className="flex items-center gap-4 flex-wrap">
         {token && rol === 'cliente' && (
-          <Link to="/buscar" className="text-white underline cursor-pointer hover:text-gray-300">
-            Buscar expertos
-          </Link>
+          <>
+            <Link to="/buscar" className="text-white underline cursor-pointer hover:text-gray-300">
+              Buscar expertos
+            </Link>
+            <Link to="/publicar-necesidad" className="text-white underline cursor-pointer hover:text-gray-300">
+              Publicar necesidad
+            </Link>
+          </>
         )}
 
         {token && rol === 'experto' && (
-          <Link to="/panel" className="text-white underline cursor-pointer hover:text-gray-300">
-            Mi panel
-          </Link>
+          <>
+            <Link to="/panel" className="text-white underline cursor-pointer hover:text-gray-300">
+              Mi panel
+            </Link>
+            <Link to="/oportunidades" className="text-white underline cursor-pointer hover:text-gray-300">
+              Oportunidades
+            </Link>
+          </>
         )}
 
         {token && rol === 'admin' && (
