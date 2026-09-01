@@ -14,6 +14,8 @@ import ReglasExpertos from './components/ReglasExpertos'
 import PreguntasFrecuentes from './components/PreguntasFrecuentes'
 import PublicarNecesidad from './components/PublicarNecesidad'
 import Oportunidades from './components/Oportunidades'
+import AporteConfirmacion from './components/AporteConfirmacion'
+import EstadisticasAdmin from './components/EstadisticasAdmin'
 
 function App() {
   return (
@@ -33,6 +35,8 @@ function App() {
       <Route path="/preguntas-frecuentes" element={<PreguntasFrecuentes />} />
       <Route path="/publicar-necesidad" element={<PublicarNecesidad />} />
       <Route path="/oportunidades" element={<Oportunidades />} />
+      <Route path="/aporte-confirmacion" element={<AporteConfirmacion />} />
+      <Route path="/admin/estadisticas" element={<EstadisticasAdmin />} />
     </Routes>
   )
 }

@@ -552,6 +552,34 @@ function PanelExperto() {
                 </div>
               )}
 
+              {experto.rol === 'experto' && experto.verificado && experto.plan === 'pro' && (
+                <div className="mb-3 p-3 bg-white border border-gray-200 rounded max-w-sm">
+                  <p className="font-bold text-sm mb-2 flex items-center gap-2">
+                    Tus estadisticas
+                    <span className="px-2 py-0.5 bg-yellow-400 text-[#2C3E50] text-xs font-bold rounded-full">
+                      ⭐ Pro
+                    </span>
+                  </p>
+                  <div className="flex gap-4 text-sm text-gray-700">
+                    <p>👁️ {experto.vistasPerfil || 0} vistas</p>
+                    <p>💬 {experto.contactosRecibidos || 0} contactos</p>
+                  </div>
+                  <p className="text-sm text-gray-700 mt-1">
+                    🔎 {experto.aparicionesBusqueda || 0} apariciones en busquedas
+                  </p>
+                </div>
+              )}
+
+              {experto.rol === 'experto' && experto.verificado && experto.plan === 'gratuito' && (
+                <div className="mb-3 p-3 bg-[#2C3E50] rounded max-w-sm text-white">
+                  <p className="font-bold text-sm mb-1">📊 Estadisticas exclusivas del plan Pro</p>
+                  <p className="text-xs text-gray-300">
+                    Con el plan Pro puedes ver cuantas personas visitan tu perfil, te contactan, y en cuantas
+                    busquedas apareces.
+                  </p>
+                </div>
+              )}
+
               {experto.rol !== 'cliente' && (
                 <>
                   <p>Categoria: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>
@@ -629,11 +657,15 @@ function PanelExperto() {
                 </button>
               </div>
 
-              {experto.rol === 'experto' && experto.verificado && (
+              {(experto.rol === 'experto' || experto.rol === 'cliente') && experto.verificado && (
                 <div className="mt-6 pt-6 border-t border-gray-200 max-w-md">
-                  <h3 className="font-bold mb-2">Verificar reputacion de un cliente</h3>
+                  <h3 className="font-bold mb-2">
+                    {experto.rol === 'experto' ? 'Verificar reputacion de un cliente' : 'Buscar y calificar a un experto'}
+                  </h3>
                   <p className="text-sm text-gray-600 mb-2">
-                    Antes de aceptar un servicio, puedes revisar la reputacion de un cliente buscando su numero de WhatsApp.
+                    {experto.rol === 'experto'
+                      ? 'Antes de aceptar un servicio, puedes revisar la reputacion de un cliente buscando su numero de WhatsApp.'
+                      : 'Busca por el numero de WhatsApp del experto que contactaste para revisar su reputacion o calificarlo.'}
                   </p>
 
                   <div className="flex gap-2 mb-3">
@@ -676,7 +708,7 @@ function PanelExperto() {
                         to={`/calificar/${resultadoBusqueda.id}`}
                         className="inline-block mt-3 px-4 py-2 bg-[#2C3E50] text-white rounded cursor-pointer hover:bg-[#1a252f]"
                       >
-                        Calificar a este cliente
+                        {resultadoBusqueda.rol === 'cliente' ? 'Calificar a este cliente' : 'Calificar a este experto'}
                       </Link>
                     </div>
                   )}

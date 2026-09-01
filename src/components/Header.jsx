@@ -31,8 +31,11 @@ function Header({ children }) {
             <Link to="/buscar" className="text-white underline cursor-pointer hover:text-gray-300">
               Buscar expertos
             </Link>
-            <Link to="/publicar-necesidad" className="text-white underline cursor-pointer hover:text-gray-300">
-              Publicar necesidad
+            <Link
+              to="/publicar-necesidad"
+              className="px-4 py-2 bg-yellow-400 text-[#2C3E50] rounded font-bold cursor-pointer hover:bg-yellow-500"
+            >
+              Publica una oferta como cliente
             </Link>
           </>
         )}
@@ -49,9 +52,14 @@ function Header({ children }) {
         )}
 
         {token && rol === 'admin' && (
-          <Link to="/admin" className="text-white underline cursor-pointer hover:text-gray-300">
-            Panel admin
-          </Link>
+          <>
+            <Link to="/admin" className="text-white underline cursor-pointer hover:text-gray-300">
+              Panel admin
+            </Link>
+            <Link to="/admin/estadisticas" className="text-white underline cursor-pointer hover:text-gray-300">
+              Estadisticas
+            </Link>
+          </>
         )}
 
         {!token && (

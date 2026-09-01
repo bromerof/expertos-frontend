@@ -7,6 +7,7 @@ function Calificar() {
   const { id } = useParams()
   const navigate = useNavigate()
   const token = localStorage.getItem('token')
+  const rol = localStorage.getItem('rol')
 
   const [persona, setPersona] = useState(null)
   const [puntuacion, setPuntuacion] = useState(0)
@@ -14,6 +15,10 @@ function Calificar() {
   const [error, setError] = useState('')
   const [errorCarga, setErrorCarga] = useState('')
   const [enviado, setEnviado] = useState(false)
+
+  const [montoAporte, setMontoAporte] = useState('')
+  const [errorAporte, setErrorAporte] = useState('')
+  const [generandoAporte, setGenerandoAporte] = useState(false)
 
   useEffect(() => {
     if (!token) return
@@ -67,6 +72,64 @@ function Calificar() {
       })
   }
 
+  const handleAportar = () => {
+    setErrorAporte('')
+    const montoNum = parseInt(montoAporte, 10)
+
+    if (!montoNum || montoNum < 1000) {
+      setErrorAporte('El aporte minimo es de $1.000 COP')
+      return
+    }
+
+    setGenerandoAporte(true)
+
+    fetch(API_URL + '/api/pagos/aporte/generar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({ monto: montoNum })
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al generar el aporte')
+        }
+        return data
+      })
+      .then((data) => {
+        // Construimos un formulario y lo enviamos a Wompi (Web Checkout)
+        const form = document.createElement('form')
+        form.method = 'GET'
+        form.action = 'https://checkout.wompi.co/p/'
+
+        const campos = {
+          'public-key': data.llavePublica,
+          'currency': 'COP',
+          'amount-in-cents': data.montoEnCentavos,
+          'reference': data.referencia,
+          'signature:integrity': data.firma,
+          'redirect-url': window.location.origin + '/aporte-confirmacion'
+        }
+
+        Object.entries(campos).forEach(([nombre, valor]) => {
+          const input = document.createElement('input')
+          input.type = 'hidden'
+          input.name = nombre
+          input.value = valor
+          form.appendChild(input)
+        })
+
+        document.body.appendChild(form)
+        form.submit()
+      })
+      .catch((err) => {
+        setErrorAporte(err.message)
+        setGenerandoAporte(false)
+      })
+  }
+
   if (!token) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -104,9 +167,43 @@ function Calificar() {
         <h2 className="text-xl font-bold mb-2">Calificar a {persona.nombre}</h2>
 
         {enviado ? (
-          <p className="bg-green-100 text-green-700 p-3 rounded">
-            Gracias por tu calificacion!
-          </p>
+          <>
+            <p className="bg-green-100 text-green-700 p-3 rounded mb-4">
+              Gracias por tu calificacion!
+            </p>
+
+            {rol === 'cliente' && (
+              <div className="bg-white border border-gray-300 rounded p-4">
+                <p className="font-bold mb-1">¿Quieres apoyar a EXPERTOS?</p>
+                <p className="text-sm text-gray-600 mb-3">
+                  Este aporte es totalmente voluntario y ayuda a mantener la plataforma funcionando.
+                </p>
+
+                {errorAporte && (
+                  <p className="bg-red-100 text-red-700 p-2 rounded mb-3 text-sm">{errorAporte}</p>
+                )}
+
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    min="1000"
+                    step="1000"
+                    value={montoAporte}
+                    onChange={(e) => setMontoAporte(e.target.value)}
+                    placeholder="Ej. 5000"
+                    className="w-full p-2 border rounded"
+                  />
+                  <button
+                    onClick={handleAportar}
+                    disabled={generandoAporte}
+                    className="px-4 py-2 bg-[#2C3E50] text-white rounded cursor-pointer hover:bg-[#1a252f] disabled:opacity-60 whitespace-nowrap"
+                  >
+                    {generandoAporte ? 'Espera...' : 'Aportar'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         ) : (
           <>
             {error && (
