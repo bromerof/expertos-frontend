@@ -16,6 +16,9 @@ import PublicarNecesidad from './components/PublicarNecesidad'
 import Oportunidades from './components/Oportunidades'
 import AporteConfirmacion from './components/AporteConfirmacion'
 import EstadisticasAdmin from './components/EstadisticasAdmin'
+import Blog from './components/Blog'
+import ArticuloBlog from './components/ArticuloBlog'
+import GestionBlog from './components/GestionBlog'
 
 function App() {
   return (
@@ -37,6 +40,9 @@ function App() {
       <Route path="/oportunidades" element={<Oportunidades />} />
       <Route path="/aporte-confirmacion" element={<AporteConfirmacion />} />
       <Route path="/admin/estadisticas" element={<EstadisticasAdmin />} />
+      <Route path="/blog" element={<Blog />} />
+      <Route path="/blog/:id" element={<ArticuloBlog />} />
+      <Route path="/admin/blog" element={<GestionBlog />} />
     </Routes>
   )
 }

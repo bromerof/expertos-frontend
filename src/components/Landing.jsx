@@ -313,9 +313,14 @@ function Landing() {
 
       {/* Footer */}
       <footer className="bg-[#2C3E50] text-white text-center py-8 text-sm">
-        <Link to="/preguntas-frecuentes" className="text-base font-bold underline hover:text-gray-300">
-          Preguntas frecuentes
-        </Link>
+        <div className="flex justify-center gap-6">
+          <Link to="/preguntas-frecuentes" className="text-base font-bold underline hover:text-gray-300">
+            Preguntas frecuentes
+          </Link>
+          <Link to="/blog" className="text-base font-bold underline hover:text-gray-300">
+            Blog
+          </Link>
+        </div>
         <p className="mt-3 text-gray-300">© {new Date().getFullYear()} EXPERTOS. Todos los derechos reservados.</p>
       </footer>
     </div>

@@ -59,6 +59,9 @@ function Header({ children }) {
             <Link to="/admin/estadisticas" className="text-white underline cursor-pointer hover:text-gray-300">
               Estadisticas
             </Link>
+            <Link to="/admin/blog" className="text-white underline cursor-pointer hover:text-gray-300">
+              Gestionar blog
+            </Link>
           </>
         )}
 
@@ -84,6 +87,10 @@ function Header({ children }) {
             </Link>
           </>
         )}
+
+        <Link to="/blog" className="text-white underline cursor-pointer hover:text-gray-300">
+          Blog
+        </Link>
 
         <button
           onClick={handleSoporte}
