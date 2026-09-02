@@ -3,13 +3,39 @@ import { useParams, Link } from 'react-router-dom'
 import { API_URL } from '../config'
 import Header from './Header'
 
-// Convierte **texto** en negrita dentro de una linea
+// Convierte **texto** en negrita y [texto](url) en enlaces reales dentro de una linea.
+// Los enlaces internos (que empiezan con /) usan Link de React Router, para no
+// recargar toda la pagina; los externos (http/https) abren en pestaña nueva.
 function procesarNegritas(texto) {
-  const partes = texto.split(/(\*\*[^*]+\*\*)/g)
+  const partes = texto.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g)
   return partes.map((parte, i) => {
     if (parte.startsWith('**') && parte.endsWith('**')) {
       return <strong key={i}>{parte.slice(2, -2)}</strong>
     }
+
+    const coincidenciaEnlace = parte.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
+    if (coincidenciaEnlace) {
+      const [, textoEnlace, url] = coincidenciaEnlace
+      if (url.startsWith('/')) {
+        return (
+          <Link key={i} to={url} className="text-[#2C3E50] underline font-bold hover:text-[#1a252f]">
+            {textoEnlace}
+          </Link>
+        )
+      }
+      return (
+        <a
+          key={i}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#2C3E50] underline font-bold hover:text-[#1a252f]"
+        >
+          {textoEnlace}
+        </a>
+      )
+    }
+
     return parte
   })
 }

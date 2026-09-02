@@ -21,6 +21,7 @@ import ArticuloBlog from './components/ArticuloBlog'
 import GestionBlog from './components/GestionBlog'
 import OfertasAdmin from './components/OfertasAdmin'
 import ActivarPro from './components/ActivarPro'
+import GestionPreguntas from './components/GestionPreguntas'
 import ElegirPlan from './components/ElegirPlan'
 import EsperaAprobacion from './components/EsperaAprobacion'
 
@@ -49,6 +50,7 @@ function App() {
       <Route path="/admin/blog" element={<GestionBlog />} />
       <Route path="/admin/ofertas" element={<OfertasAdmin />} />
       <Route path="/activar-pro" element={<ActivarPro />} />
+      <Route path="/admin/preguntas" element={<GestionPreguntas />} />
       <Route path="/elegir-plan" element={<ElegirPlan />} />
       <Route path="/espera-aprobacion" element={<EsperaAprobacion />} />
     </Routes>

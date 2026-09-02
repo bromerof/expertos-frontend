@@ -65,6 +65,9 @@ function Header({ children }) {
             <Link to="/admin/ofertas" className="text-white underline cursor-pointer hover:text-gray-300">
               Ver ofertas
             </Link>
+            <Link to="/admin/preguntas" className="text-white underline cursor-pointer hover:text-gray-300">
+              Gestionar FAQ
+            </Link>
           </>
         )}
 

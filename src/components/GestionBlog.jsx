@@ -233,7 +233,8 @@ function GestionBlog() {
                   required
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Usa **texto** para negrita, ## Titulo para subtitulos, y "- " al inicio de una linea para listas.
+                  Usa **texto** para negrita, ## Titulo para subtitulos, "- " al inicio de una linea para listas,
+                  y [texto del enlace](/ruta) para enlaces (ej. [Busca un experto](/buscar)).
                   Cada parrafo en una linea nueva.
                 </p>
               </div>
