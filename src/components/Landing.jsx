@@ -74,7 +74,7 @@ function Landing() {
             Iniciar sesión
           </Link>
           <Link to="/registro-cliente" className="text-white underline cursor-pointer hover:text-gray-300">
-            Registrarme como cliente
+            Regístrate como cliente
           </Link>
           <button
             onClick={handleSoporte}

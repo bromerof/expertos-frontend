@@ -250,7 +250,7 @@ function PublicarNecesidad() {
             disabled={enviando}
             className="mt-2 px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f] disabled:opacity-60"
           >
-            {enviando ? 'Publicando...' : 'Publicar necesidad'}
+            {enviando ? 'Publicando...' : 'Publica tu necesidad'}
           </button>
         </form>
 

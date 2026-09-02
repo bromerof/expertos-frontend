@@ -19,6 +19,7 @@ import EstadisticasAdmin from './components/EstadisticasAdmin'
 import Blog from './components/Blog'
 import ArticuloBlog from './components/ArticuloBlog'
 import GestionBlog from './components/GestionBlog'
+import OfertasAdmin from './components/OfertasAdmin'
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
       <Route path="/blog" element={<Blog />} />
       <Route path="/blog/:id" element={<ArticuloBlog />} />
       <Route path="/admin/blog" element={<GestionBlog />} />
+      <Route path="/admin/ofertas" element={<OfertasAdmin />} />
     </Routes>
   )
 }

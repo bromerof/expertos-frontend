@@ -95,9 +95,63 @@ function EstadisticasAdmin() {
               {tarjeta('Necesidades abiertas', stats.necesidadesAbiertas, '🔓')}
             </div>
 
-            <h3 className="font-bold text-gray-600 mb-2">Finanzas</h3>
+            <h3 className="font-bold text-gray-600 mb-2">💰 Finanzas</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-2 max-w-3xl">
+              {tarjeta('Aportes voluntarios recibidos', stats.totalAportesAprobados, '💚')}
+              {tarjeta(
+                'Dinero real recaudado (aportes)',
+                '$' + stats.ingresos.aportesRecaudadosCOP.toLocaleString('es-CO'),
+                '💵'
+              )}
+              {tarjeta(
+                'Proyeccion mensual Pro',
+                '$' + stats.ingresos.proSimuladoMensualCOP.toLocaleString('es-CO'),
+                '⭐'
+              )}
+            </div>
+            <p className="text-xs text-gray-400 mb-6 max-w-3xl">
+              La proyeccion de Pro es simulada: Wompi todavia no procesa cobros reales de la suscripcion.
+              Solo los aportes voluntarios son dinero real recaudado hasta ahora.
+            </p>
+
+            {/* Busquedas */}
+            <h3 className="font-bold text-gray-600 mb-2">🔎 Busquedas</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6 max-w-3xl">
-              {tarjeta('Aportes recibidos', stats.totalAportesAprobados, '💚')}
+              {tarjeta('Busquedas realizadas', stats.totalBusquedas, '🔎')}
+              {tarjeta('Con resultados', stats.busquedasConResultado, '✅')}
+              {tarjeta('Sin resultados', stats.busquedasSinResultado, '❌')}
+              {tarjeta('Tasa de exito', stats.tasaBusquedaExitosa + '%', '📈')}
+            </div>
+
+            {stats.terminosSinResultado.length > 0 && (
+              <div className="bg-white border border-gray-300 rounded p-4 mb-6 max-w-md">
+                <p className="font-bold text-sm mb-2">Lo que buscan y no encuentran</p>
+                <p className="text-xs text-gray-500 mb-2">
+                  Estos son los expertos que probablemente necesitas conseguir.
+                </p>
+                <ul className="text-sm text-gray-700 list-disc list-inside">
+                  {stats.terminosSinResultado.map((t) => (
+                    <li key={t.termino}>
+                      "{t.termino}" — buscado {t.veces} {t.veces === 1 ? 'vez' : 'veces'}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Embudo */}
+            <h3 className="font-bold text-gray-600 mb-2">🔻 Embudo del marketplace</h3>
+            <div className="bg-white border border-gray-300 rounded p-4 mb-6 max-w-md">
+              <p className="text-xs text-gray-400 mb-3">
+                Las calificaciones se usan como señal aproximada de que un servicio se concreto,
+                ya que hoy no hay otra forma de confirmarlo.
+              </p>
+              {[
+                { etiqueta: 'Busquedas', valor: stats.embudo.busquedas },
+                { etiqueta: 'Vistas de perfil', valor: stats.embudo.vistasPerfil },
+                { etiqueta: 'Contactos', valor: stats.embudo.contactos },
+                { etiqueta: 'Calificaciones (≈ servicios)', valor: stats.embudo.calificaciones }
+              ].map((paso) => barra(paso.etiqueta, paso.valor, stats.embudo.busquedas || 1, '#27AE60'))}
             </div>
 
             {/* Calidad / Confianza */}
