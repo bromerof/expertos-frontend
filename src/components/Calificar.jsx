@@ -110,7 +110,7 @@ function Calificar() {
           'amount-in-cents': data.montoEnCentavos,
           'reference': data.referencia,
           'signature:integrity': data.firma,
-          'redirect-url': window.location.origin + '/aporte-confirmacion'
+          'redirect-url': data.redirectUrl
         }
 
         Object.entries(campos).forEach(([nombre, valor]) => {
