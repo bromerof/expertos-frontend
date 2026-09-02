@@ -71,7 +71,7 @@ function Header({ children }) {
         {!token && (
           <>
             <Link
-              to="/registro"
+              to="/elegir-plan"
               className="text-white underline cursor-pointer hover:text-gray-300"
             >
               Soy Experto

@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { API_URL } from '../config'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import Header from './Header'
 import SelectorProfesion from './SelectorProfesion'
 
 function RegistroExperto() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const planElegido = searchParams.get('plan') === 'pro' ? 'pro' : 'free'
    const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -37,6 +39,12 @@ function RegistroExperto() {
   const [aceptaDatos, setAceptaDatos] = useState(false)
   const [aceptaReglas, setAceptaReglas] = useState(false)
   const [aceptaComunicaciones, setAceptaComunicaciones] = useState(false)
+
+  const [fotoPerfil, setFotoPerfil] = useState(null)
+  const [fotoDocumentoFrente, setFotoDocumentoFrente] = useState(null)
+  const [fotoDocumentoReverso, setFotoDocumentoReverso] = useState(null)
+  const [enviando, setEnviando] = useState(false)
+  const [pasoEnvio, setPasoEnvio] = useState('')
 
   useEffect(() => {
     fetch(API_URL + '/api/departamentos')
@@ -113,7 +121,7 @@ function RegistroExperto() {
   const handleSubmit = (e) => {
     e.preventDefault()
     setError('')
-        const confirmar = window.confirm('Revisa que toda tu informacion este correcta (especialmente tu nombre) antes de continuar. Deseas registrarte con estos datos?')
+    const confirmar = window.confirm('Revisa que toda tu informacion este correcta (especialmente tu nombre) antes de continuar. Deseas registrarte con estos datos?')
     if (!confirmar) return
 
     if (!profesionId) {
@@ -131,7 +139,7 @@ function RegistroExperto() {
       return
     }
 
-        const idsMunicipios = ubicaciones
+    const idsMunicipios = ubicaciones
       .map(u => u.municipioId)
       .filter(id => id !== '')
 
@@ -145,6 +153,11 @@ function RegistroExperto() {
       return
     }
 
+    if (!fotoPerfil || !fotoDocumentoFrente || !fotoDocumentoReverso) {
+      setError('Debes subir tu foto de perfil y las dos fotos de tu documento de identidad')
+      return
+    }
+
     const datosCompletos = {
       ...formData,
       ubicaciones: idsMunicipios,
@@ -153,6 +166,26 @@ function RegistroExperto() {
       datosAceptados: aceptaDatos,
       reglasAceptadas: aceptaReglas,
       comunicacionesAceptadas: aceptaComunicaciones
+    }
+
+    setEnviando(true)
+    setPasoEnvio('Creando tu cuenta...')
+
+    // Sube una sola foto a un endpoint ya existente, usando el token recien obtenido
+    const subirFoto = (endpoint, campo, archivo, token, id) => {
+      const datosFormulario = new FormData()
+      datosFormulario.append(campo, archivo)
+      return fetch(`${API_URL}/api/expertos/${id}/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+        body: datosFormulario
+      }).then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al subir una de tus fotos')
+        }
+        return data
+      })
     }
 
     fetch(API_URL + '/api/auth/registro', {
@@ -167,12 +200,34 @@ function RegistroExperto() {
         }
         return data
       })
-      .then(() => {
-        alert('Registro exitoso! Ahora puedes iniciar sesion.')
-        navigate('/login')
+      .then(async (datosExperto) => {
+        // Quedamos logueados automaticamente con el token que devuelve el registro
+        localStorage.setItem('token', datosExperto.token)
+        localStorage.setItem('expertoId', datosExperto._id)
+        localStorage.setItem('rol', 'experto')
+
+        setPasoEnvio('Subiendo tu foto de perfil...')
+        await subirFoto('foto', 'foto', fotoPerfil, datosExperto.token, datosExperto._id)
+
+        setPasoEnvio('Subiendo el frente de tu documento...')
+        await subirFoto('foto-documento-frente', 'fotoDocumentoFrente', fotoDocumentoFrente, datosExperto.token, datosExperto._id)
+
+        setPasoEnvio('Subiendo el reverso de tu documento...')
+        await subirFoto('foto-documento-reverso', 'fotoDocumentoReverso', fotoDocumentoReverso, datosExperto.token, datosExperto._id)
+
+        return datosExperto
+      })
+      .then((datosExperto) => {
+        if (planElegido === 'pro') {
+          navigate('/activar-pro')
+        } else {
+          navigate('/espera-aprobacion')
+        }
       })
       .catch((err) => {
         setError(err.message)
+        setEnviando(false)
+        setPasoEnvio('')
       })
   }
 
@@ -181,7 +236,12 @@ function RegistroExperto() {
             <Header />
 
       <div className="p-6 max-w-lg">
-        <h2 className="text-xl font-bold mb-4">Registro de experto</h2>
+        <h2 className="text-xl font-bold mb-1">Registro de experto</h2>
+        <p className="text-sm text-gray-500 mb-4">
+          {planElegido === 'pro'
+            ? '⭐ Te vas a registrar con el plan Pro — primer mes gratis.'
+            : 'Te vas a registrar con el plan Free.'}
+        </p>
 
         {error && (
           <p className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</p>
@@ -422,6 +482,45 @@ function RegistroExperto() {
             />
           </div>
 
+          <div>
+            <label className="block mb-1">Foto de perfil</label>
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              onChange={(e) => setFotoPerfil(e.target.files[0])}
+              className="w-full p-2 border rounded bg-white"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Una foto clara y reciente de tu rostro. Se mostrara en tu perfil publico.
+            </p>
+          </div>
+
+          <div>
+            <label className="block mb-1">Documento de identidad — frente</label>
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              onChange={(e) => setFotoDocumentoFrente(e.target.files[0])}
+              className="w-full p-2 border rounded bg-white"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block mb-1">Documento de identidad — reverso</label>
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              onChange={(e) => setFotoDocumentoReverso(e.target.files[0])}
+              className="w-full p-2 border rounded bg-white"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Estas fotos solo las revisa el equipo de EXPERTOS para aprobar tu cuenta, nunca se muestran publicamente.
+            </p>
+          </div>
+
           <div className="flex flex-col gap-2">
             <label className="flex items-start gap-2">
               <input
@@ -483,9 +582,10 @@ function RegistroExperto() {
 
           <button
             type="submit"
-            className="mt-2 px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f]"
+            disabled={enviando}
+            className="mt-2 px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f] disabled:opacity-60"
           >
-            Registrarse
+            {enviando ? pasoEnvio : 'Registrarse'}
           </button>
         </form>
       </div>

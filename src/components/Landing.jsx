@@ -64,7 +64,7 @@ function Landing() {
           <a href="#como-funciona" className="underline cursor-pointer hover:text-gray-300">
             Cómo funciona
           </a>
-          <Link to="/registro" className="underline cursor-pointer hover:text-gray-300">
+          <Link to="/elegir-plan" className="underline cursor-pointer hover:text-gray-300">
             Conviértete en experto
           </Link>
         </nav>
@@ -150,7 +150,7 @@ function Landing() {
               Comparte tu experiencia, ofrece tus servicios y encuentra nuevas oportunidades.
             </p>
             <Link
-              to="/registro"
+              to="/elegir-plan"
               className="inline-block px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f]"
             >
               Quiero ser experto →
@@ -230,7 +230,7 @@ function Landing() {
           Convierte tus conocimientos y habilidades en nuevas oportunidades profesionales.
         </p>
         <Link
-          to="/registro"
+          to="/elegir-plan"
           className="inline-block px-6 py-3 bg-white text-[#2C3E50] rounded font-bold cursor-pointer hover:bg-gray-200 mb-8"
         >
           Conviértete en experto →
@@ -306,7 +306,7 @@ function Landing() {
         </button>
 
         <p className="text-gray-600 mb-1">¿Tienes conocimientos para compartir?</p>
-        <Link to="/registro" className="text-[#2C3E50] underline font-bold cursor-pointer hover:text-[#1a252f]">
+        <Link to="/elegir-plan" className="text-[#2C3E50] underline font-bold cursor-pointer hover:text-[#1a252f]">
           Conviértete en experto →
         </Link>
       </section>

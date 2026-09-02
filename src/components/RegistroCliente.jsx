@@ -29,6 +29,9 @@ function RegistroCliente() {
   const [municipioId, setMunicipioId] = useState('')
 
   const [error, setError] = useState('')
+  const [fotoPerfil, setFotoPerfil] = useState(null)
+  const [enviando, setEnviando] = useState(false)
+  const [pasoEnvio, setPasoEnvio] = useState('')
 
   useEffect(() => {
     fetch(API_URL + '/api/departamentos')
@@ -79,6 +82,11 @@ function RegistroCliente() {
       return
     }
 
+    if (!fotoPerfil) {
+      setError('Debes subir tu foto de perfil')
+      return
+    }
+
     const datosCompletos = {
       ...formData,
       ubicaciones: municipioId ? [municipioId] : [],
@@ -87,6 +95,9 @@ function RegistroCliente() {
       datosAceptados: aceptaDatos,
       comunicacionesAceptadas: aceptaComunicaciones
     }
+
+    setEnviando(true)
+    setPasoEnvio('Creando tu cuenta...')
 
     fetch(API_URL + '/api/auth/registro', {
       method: 'POST',
@@ -100,12 +111,33 @@ function RegistroCliente() {
         }
         return data
       })
+      .then(async (datosCliente) => {
+        // Quedamos logueados automaticamente con el token que devuelve el registro
+        localStorage.setItem('token', datosCliente.token)
+        localStorage.setItem('expertoId', datosCliente._id)
+        localStorage.setItem('rol', 'cliente')
+
+        setPasoEnvio('Subiendo tu foto de perfil...')
+        const datosFormulario = new FormData()
+        datosFormulario.append('foto', fotoPerfil)
+
+        const res = await fetch(`${API_URL}/api/expertos/${datosCliente._id}/foto`, {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + datosCliente.token },
+          body: datosFormulario
+        })
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al subir tu foto de perfil')
+        }
+      })
       .then(() => {
-        alert('Registro exitoso! Ahora puedes iniciar sesion.')
-        navigate('/login')
+        navigate('/espera-aprobacion')
       })
       .catch((err) => {
         setError(err.message)
+        setEnviando(false)
+        setPasoEnvio('')
       })
   }
 
@@ -266,6 +298,20 @@ function RegistroCliente() {
             </div>
           </div>
 
+          <div>
+            <label className="block mb-1">Foto de perfil</label>
+            <input
+              type="file"
+              accept="image/png, image/jpeg"
+              onChange={(e) => setFotoPerfil(e.target.files[0])}
+              className="w-full p-2 border rounded bg-white"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Una foto clara y reciente de tu rostro, para que los expertos sepan con quien hablan.
+            </p>
+          </div>
+
           <div className="flex flex-col gap-2">
             <label className="flex items-start gap-2">
               <input
@@ -312,9 +358,10 @@ function RegistroCliente() {
 
           <button
             type="submit"
-            className="mt-2 px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f]"
+            disabled={enviando}
+            className="mt-2 px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f] disabled:opacity-60"
           >
-            Registrarse
+            {enviando ? pasoEnvio : 'Registrarse'}
           </button>
         </form>
       </div>

@@ -20,6 +20,9 @@ import Blog from './components/Blog'
 import ArticuloBlog from './components/ArticuloBlog'
 import GestionBlog from './components/GestionBlog'
 import OfertasAdmin from './components/OfertasAdmin'
+import ActivarPro from './components/ActivarPro'
+import ElegirPlan from './components/ElegirPlan'
+import EsperaAprobacion from './components/EsperaAprobacion'
 
 function App() {
   return (
@@ -45,6 +48,9 @@ function App() {
       <Route path="/blog/:id" element={<ArticuloBlog />} />
       <Route path="/admin/blog" element={<GestionBlog />} />
       <Route path="/admin/ofertas" element={<OfertasAdmin />} />
+      <Route path="/activar-pro" element={<ActivarPro />} />
+      <Route path="/elegir-plan" element={<ElegirPlan />} />
+      <Route path="/espera-aprobacion" element={<EsperaAprobacion />} />
     </Routes>
   )
 }
