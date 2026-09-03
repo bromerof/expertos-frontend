@@ -102,6 +102,10 @@ function ActivarPro() {
               {/* El formulario nativo no puede llevar el header Authorization,
                   por eso el token viaja como campo oculto */}
               <input type="hidden" name="authToken" value={token} />
+              <input type="hidden" name="tokenTerminos" value={tokens.tokenTerminos} />
+              {tokens.tokenDatosPersonales && (
+                <input type="hidden" name="tokenDatosPersonales" value={tokens.tokenDatosPersonales} />
+              )}
               {/* El boton de Wompi se inserta aqui automaticamente */}
             </form>
             <p className="text-xs text-gray-400 mt-3">
