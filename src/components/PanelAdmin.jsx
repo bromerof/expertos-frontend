@@ -23,6 +23,11 @@ function PanelAdmin() {
   const [todosLosExpertos, setTodosLosExpertos] = useState([])
   const [errorPro, setErrorPro] = useState('')
 
+  const [cobrosPro, setCobrosPro] = useState([])
+  const [errorCobros, setErrorCobros] = useState('')
+  const [ejecutandoCobro, setEjecutandoCobro] = useState(false)
+  const [mensajeCobro, setMensajeCobro] = useState('')
+
   const token = localStorage.getItem('token')
 
   useEffect(() => {
@@ -32,6 +37,7 @@ function PanelAdmin() {
     }
     cargarPendientes()
     cargarTodosLosExpertos()
+    cargarCobrosPro()
   }, [token, navigate])
 
   const cargarPendientes = () => {
@@ -75,6 +81,70 @@ function PanelAdmin() {
       })
       .then((data) => setTodosLosExpertos(data))
       .catch((err) => setErrorPro(err.message))
+  }
+
+  const cargarCobrosPro = () => {
+    fetch(API_URL + '/api/admin/cobros-pro', {
+      cache: 'no-store',
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al cargar el historial de cobros')
+        }
+        return data
+      })
+      .then((data) => setCobrosPro(data))
+      .catch((err) => setErrorCobros(err.message))
+  }
+
+  const handleVerificarCobro = (id) => {
+    setErrorCobros('')
+    fetch(`${API_URL}/api/admin/cobros-pro/${id}/verificar`, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al verificar el cobro')
+        }
+        return data
+      })
+      .then((data) => {
+        setMensajeCobro(data.mensaje)
+        cargarCobrosPro()
+        cargarTodosLosExpertos()
+      })
+      .catch((err) => setErrorCobros(err.message))
+  }
+
+  const handleEjecutarCobro = () => {
+    setEjecutandoCobro(true)
+    setMensajeCobro('')
+
+    fetch(API_URL + '/api/admin/cobros-pro/ejecutar-ahora', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al ejecutar el cobro')
+        }
+        return data
+      })
+      .then((data) => {
+        setMensajeCobro(data.mensaje)
+        setEjecutandoCobro(false)
+        cargarCobrosPro()
+        cargarTodosLosExpertos()
+      })
+      .catch((err) => {
+        setErrorCobros(err.message)
+        setEjecutandoCobro(false)
+      })
   }
 
   const handleAprobar = (id) => {
@@ -409,6 +479,68 @@ function PanelAdmin() {
                   >
                     {experto.plan === 'pro' ? 'Quitar Pro' : 'Activar Pro'}
                   </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="mt-10 max-w-3xl">
+          <h2 className="text-xl font-bold mb-1">Cobro mensual del plan Pro (real)</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Este proceso corre automaticamente una vez al dia. El boton de abajo lo ejecuta ahora mismo,
+            util solo para pruebas.
+          </p>
+
+          <button
+            onClick={handleEjecutarCobro}
+            disabled={ejecutandoCobro}
+            className="mb-4 px-4 py-2 bg-[#2C3E50] text-white rounded cursor-pointer hover:bg-[#1a252f] disabled:opacity-60"
+          >
+            {ejecutandoCobro ? 'Ejecutando...' : 'Ejecutar cobro ahora (prueba)'}
+          </button>
+
+          {mensajeCobro && (
+            <p className="bg-green-100 text-green-700 p-3 rounded mb-4">{mensajeCobro}</p>
+          )}
+          {errorCobros && (
+            <p className="bg-red-100 text-red-700 p-3 rounded mb-4">{errorCobros}</p>
+          )}
+
+          <h3 className="font-bold text-gray-600 mb-2">Historial de cobros</h3>
+          {cobrosPro.length === 0 ? (
+            <p className="text-gray-500 text-sm">Todavia no se ha ejecutado ningun cobro.</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {cobrosPro.map((c) => (
+                <div key={c._id} className="bg-white border border-gray-300 rounded p-3 flex justify-between items-center">
+                  <div>
+                    <p className="font-bold text-sm">{c.experto ? c.experto.nombre : 'Experto eliminado'}</p>
+                    <p className="text-xs text-gray-500">
+                      ${(c.montoEnCentavos / 100).toLocaleString('es-CO')} · Intento {c.intentoNumero} ·{' '}
+                      {new Date(c.fecha).toLocaleString('es-CO')}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={
+                        'text-xs px-2 py-0.5 rounded-full ' +
+                        (c.estado === 'aprobada' ? 'bg-green-100 text-green-700'
+                          : c.estado === 'rechazada' ? 'bg-red-100 text-red-700'
+                          : 'bg-yellow-100 text-yellow-800')
+                      }
+                    >
+                      {c.estado}
+                    </span>
+                    {c.estado === 'pendiente' && (
+                      <button
+                        onClick={() => handleVerificarCobro(c._id)}
+                        className="text-xs text-[#2C3E50] underline cursor-pointer"
+                      >
+                        Verificar
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
