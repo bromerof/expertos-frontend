@@ -3,6 +3,13 @@ import { API_URL } from '../config'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import Header from './Header'
 
+// Quita tildes y pasa a minusculas, para que "fotografo" tambien encuentre
+// "Fotógrafo" mientras se escribe (igual que en SelectorProfesion)
+function quitarTildes(texto) {
+  if (!texto) return ''
+  return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+}
+
 function Buscar() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -13,6 +20,9 @@ function Buscar() {
   const [departamentoId, setDepartamentoId] = useState('')
   const [municipioNombre, setMunicipioNombre] = useState('')
   const [error, setError] = useState('')
+
+  const [todasLasProfesiones, setTodasLasProfesiones] = useState([])
+  const [mostrarSugerencias, setMostrarSugerencias] = useState(false)
 
   useEffect(() => {
     // Si no hay sesion iniciada, no tiene sentido intentar cargar el listado:
@@ -39,6 +49,11 @@ function Buscar() {
       .then(res => res.json())
       .then(data => setDepartamentos(data))
       .catch(err => console.error('Error al cargar departamentos:', err))
+
+    fetch(API_URL + '/api/profesiones')
+      .then(res => res.json())
+      .then(data => setTodasLasProfesiones(data))
+      .catch(err => console.error('Error al cargar profesiones:', err))
   }, [navigate])
 
   const cargarExpertos = (params = {}) => {
@@ -117,20 +132,61 @@ function Buscar() {
       .catch(err => setError(err.message))
   }
 
+  const terminoBusqueda = quitarTildes(busqueda)
+  const sugerencias = terminoBusqueda.trim()
+    ? todasLasProfesiones
+        .filter((p) => quitarTildes(p.nombre).includes(terminoBusqueda))
+        .slice(0, 6)
+    : []
+
+  const handleElegirSugerencia = (nombreProfesion) => {
+    setBusqueda(nombreProfesion)
+    setMostrarSugerencias(false)
+    const params = {}
+    params.busqueda = nombreProfesion
+    if (municipioNombre) {
+      params.ubicacion = municipioNombre
+    } else if (departamentoId) {
+      params.departamento = departamentoId
+    }
+    cargarExpertos(params)
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
 
       <div className="p-6">
         <div className="flex gap-2 max-w-2xl">
-          <input
-            type="text"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleBuscar()}
-            placeholder="Buscar por nombre o categoría..."
-            className="w-full p-3 rounded border border-gray-300"
-          />
+          <div className="relative w-full">
+            <input
+              type="text"
+              value={busqueda}
+              onChange={(e) => {
+                setBusqueda(e.target.value)
+                setMostrarSugerencias(true)
+              }}
+              onFocus={() => setMostrarSugerencias(true)}
+              onBlur={() => setTimeout(() => setMostrarSugerencias(false), 150)}
+              onKeyDown={(e) => e.key === 'Enter' && handleBuscar()}
+              placeholder="Buscar por nombre o categoría..."
+              className="w-full p-3 rounded border border-gray-300"
+            />
+            {mostrarSugerencias && sugerencias.length > 0 && (
+              <ul className="absolute z-10 bg-white border border-gray-300 rounded w-full mt-1 max-h-56 overflow-y-auto shadow-lg">
+                {sugerencias.map((p) => (
+                  <li
+                    key={p._id}
+                    onMouseDown={() => handleElegirSugerencia(p.nombre)}
+                    className="p-2 hover:bg-gray-100 cursor-pointer text-sm border-b border-gray-100 last:border-b-0"
+                  >
+                    {p.nombre}
+                    {p.categoria && <span className="text-gray-400"> ({p.categoria.nombre})</span>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           <button
             onClick={handleBuscar}
             className="px-4 py-2 bg-[#2C3E50] text-white rounded cursor-pointer hover:bg-[#1a252f]"
