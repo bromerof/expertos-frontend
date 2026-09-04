@@ -110,7 +110,7 @@ function ActivarPro() {
             </form>
             <p className="text-xs text-gray-400 mt-3">
               Esta funcion todavia esta en preparacion: Wompi debe activar la
-              verificacion de seguridad (3D Secure) en la cuenta de EXPERTOS
+              verificación de seguridad (3D Secure) en la cuenta de EXPERTOS
               antes de que el registro de la tarjeta funcione de principio a fin.
             </p>
           </div>

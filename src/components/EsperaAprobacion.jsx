@@ -1,20 +1,39 @@
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import Header from './Header'
 
 function EsperaAprobacion() {
+  const [searchParams] = useSearchParams()
+  const vieneDeActivarPro = searchParams.get('pro') === 'true'
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
 
       <div className="p-6 max-w-md mx-auto text-center">
         <p className="text-5xl mb-4">⏳</p>
-        <h2 className="text-xl font-bold text-[#2C3E50] mb-2">¡Registro exitoso!</h2>
-        <p className="text-gray-600 mb-6">
-          Ya recibimos tu informacion y tus fotos. Un administrador va a revisar tu cuenta
-          antes de activarla — normalmente esto toma entre 20 y 30 minutos.
-        </p>
+
+        {vieneDeActivarPro ? (
+          <>
+            <h2 className="text-xl font-bold text-[#2C3E50] mb-2">
+              ⭐ ¡Tu tarjeta quedo registrada! Tu mes gratis de Pro ya esta activo.
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Ya recibimos tu información, tus fotos, y tu tarjeta. Un administrador va a revisar
+              tu cuenta antes de activarla — normalmente esto toma entre 20 y 30 minutos.
+            </p>
+          </>
+        ) : (
+          <>
+            <h2 className="text-xl font-bold text-[#2C3E50] mb-2">¡Registro exitoso!</h2>
+            <p className="text-gray-600 mb-6">
+              Ya recibimos tu información y tus fotos. Un administrador va a revisar tu cuenta
+              antes de activarla — normalmente esto toma entre 20 y 30 minutos.
+            </p>
+          </>
+        )}
+
         <p className="text-gray-500 text-sm mb-8">
-          Puedes cerrar esta pagina tranquilamente. Cuando quieras verificar si ya fuiste
+          Puedes cerrar esta página tranquilamente. Cuando quieras verificar si ya fuiste
           aprobado, entra a tu panel.
         </p>
         <Link

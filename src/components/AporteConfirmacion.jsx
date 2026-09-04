@@ -62,19 +62,19 @@ function AporteConfirmacion() {
 
         {estado === 'pendiente' && (
           <p className="bg-yellow-100 text-yellow-800 p-4 rounded">
-            Tu pago esta pendiente de confirmacion. Esto puede tomar unos minutos.
+            Tu pago esta pendiente de confirmación. Esto puede tomar unos minutos.
           </p>
         )}
 
         {estado === 'sin_datos' && (
           <p className="bg-red-100 text-red-700 p-4 rounded">
-            No encontramos informacion sobre tu pago.
+            No encontramos información sobre tu pago.
           </p>
         )}
 
         {estado === 'sin_sesion' && (
           <p className="bg-red-100 text-red-700 p-4 rounded">
-            Debes iniciar sesion para verificar tu pago.
+            Debes iniciar sesión para verificar tu pago.
           </p>
         )}
 

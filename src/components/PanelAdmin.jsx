@@ -262,7 +262,7 @@ function PanelAdmin() {
 
       <div className="p-6">
         <div className="flex justify-between items-center mb-4 max-w-3xl">
-          <h2 className="text-xl font-bold">Expertos pendientes de aprobacion</h2>
+          <h2 className="text-xl font-bold">Expertos pendientes de aprobación</h2>
           <button
             onClick={() => {
               setMostrarFormularioAdmin(!mostrarFormularioAdmin)
@@ -366,7 +366,7 @@ function PanelAdmin() {
         {cargando ? (
           <p>Cargando...</p>
         ) : pendientes.length === 0 ? (
-          <p>No hay expertos pendientes de aprobacion.</p>
+          <p>No hay expertos pendientes de aprobación.</p>
         ) : (
           <div className="flex flex-col gap-4 max-w-3xl">
             {pendientes.map((experto) => (
@@ -488,8 +488,8 @@ function PanelAdmin() {
         <div className="mt-10 max-w-3xl">
           <h2 className="text-xl font-bold mb-1">Cobro mensual del plan Pro (real)</h2>
           <p className="text-sm text-gray-500 mb-4">
-            Este proceso corre automaticamente una vez al dia. El boton de abajo lo ejecuta ahora mismo,
-            util solo para pruebas.
+            Este proceso corre automáticamente una vez al día. El botón de abajo lo ejecuta ahora mismo,
+            útil solo para pruebas.
           </p>
 
           <button

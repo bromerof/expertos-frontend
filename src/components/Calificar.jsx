@@ -135,9 +135,9 @@ function Calificar() {
       <div className="min-h-screen bg-gray-50">
         <Header />
         <div className="p-6">
-          <p className="mb-4">Debes iniciar sesion para poder calificar.</p>
+          <p className="mb-4">Debes iniciar sesión para poder calificar.</p>
           <Link to="/login" className="text-[#2C3E50] underline cursor-pointer hover:text-[#1a252f]">
-            Ir a iniciar sesion
+            Ir a iniciar sesión
           </Link>
         </div>
       </div>

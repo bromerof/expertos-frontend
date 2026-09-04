@@ -100,7 +100,7 @@ function PerfilExperto() {
           </p>
           <p>Categoría: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>
           {experto.otraCategoriaTexto && (
-            <p>¿Que otra categoria?: {experto.otraCategoriaTexto}</p>
+            <p>¿Qué otra categoría?: {experto.otraCategoriaTexto}</p>
           )}
           <p>Profesión: {experto.profesion && experto.profesion.nombre}</p>
           {experto.otraProfesionTexto && (

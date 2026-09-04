@@ -221,17 +221,17 @@ function PanelExperto() {
     setError('')
 
     if (experto.rol !== 'cliente' && !profesionId) {
-      setError('Debes seleccionar una categoria y una profesion')
+      setError('Debes seleccionar una categoría y una profesión')
       return
     }
 
     if (categoriaEsOtraEdicion && !formData.otraCategoriaTexto.trim()) {
-      setError('Debes indicar cual es tu categoria especifica')
+      setError('Debes indicar cuál es tu categoría específica')
       return
     }
 
     if (profesionEsOtraEdicion && !formData.otraProfesionTexto.trim()) {
-      setError('Debes indicar cual es tu profesion especifica')
+      setError('Debes indicar cuál es tu profesión específica')
       return
     }
 
@@ -240,7 +240,7 @@ function PanelExperto() {
       .filter(id => id !== '')
 
     if (idsMunicipios.length === 0) {
-      setError('Debes seleccionar al menos una ubicacion')
+      setError('Debes seleccionar al menos una ubicación')
       return
     }
 
@@ -281,7 +281,7 @@ function PanelExperto() {
     setResultadoBusqueda(null)
 
     if (!numeroBusqueda.trim()) {
-      setErrorBusqueda('Escribe un numero de WhatsApp para buscar')
+      setErrorBusqueda('Escribe un número de WhatsApp para buscar')
       return
     }
 
@@ -588,13 +588,13 @@ function PanelExperto() {
 
               {experto.rol !== 'cliente' && (
                 <>
-                  <p>Categoria: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>
+                  <p>Categoría: {experto.profesion && experto.profesion.categoria && experto.profesion.categoria.nombre}</p>
                   {experto.otraCategoriaTexto && (
-                    <p>¿Que otra categoria?: {experto.otraCategoriaTexto}</p>
+                    <p>¿Qué otra categoría?: {experto.otraCategoriaTexto}</p>
                   )}
                   <p>Profesion: {experto.profesion && experto.profesion.nombre}</p>
                   {experto.otraProfesionTexto && (
-                    <p>¿Cual otra profesion?: {experto.otraProfesionTexto}</p>
+                    <p>¿Cuál otra profesión?: {experto.otraProfesionTexto}</p>
                   )}
                   {experto.profesionesAdicionales && experto.profesionesAdicionales.length > 0 && (
                     <p>
@@ -620,7 +620,7 @@ function PanelExperto() {
                              {experto.rol !== 'cliente' && (
                 <div className="mt-3">
                   <p className="font-bold text-sm">Documento de identidad:</p>
-                  <p className="text-xs text-gray-500 mb-1">Formatos permitidos: JPG, PNG. Tamano maximo: 5MB</p>
+                  <p className="text-xs text-gray-500 mb-1">Formatos permitidos: JPG, PNG. Tamaño máximo: 5MB</p>
 
                   <div className="mb-2">
                     {experto.fotoDocumentoFrente ? (
@@ -670,8 +670,8 @@ function PanelExperto() {
                   </h3>
                   <p className="text-sm text-gray-600 mb-2">
                     {experto.rol === 'experto'
-                      ? 'Antes de aceptar un servicio, puedes revisar la reputacion de un cliente buscando su numero de WhatsApp.'
-                      : 'Busca por el numero de WhatsApp del experto que contactaste para revisar su reputacion o calificarlo.'}
+                      ? 'Antes de aceptar un servicio, puedes revisar la reputación de un cliente buscando su número de WhatsApp.'
+                      : 'Busca por el número de WhatsApp del experto que contactaste para revisar su reputación o calificarlo.'}
                   </p>
 
                   <div className="flex gap-2 mb-3">
@@ -739,7 +739,7 @@ function PanelExperto() {
             {experto.rol !== 'cliente' && (
               <>
                 <div>
-                  <label className="block mb-1">Profesion</label>
+                  <label className="block mb-1">Profesión</label>
                   <SelectorProfesion
                     todasLasProfesiones={todasLasProfesiones}
                     valorProfesionId={profesionId}
@@ -753,7 +753,7 @@ function PanelExperto() {
 
                 {categoriaEsOtraEdicion && (
                   <div>
-                    <label className="block mb-1">¿Que otra categoria?</label>
+                    <label className="block mb-1">¿Qué otra categoría?</label>
                     <input
                       type="text"
                       name="otraCategoriaTexto"
@@ -769,7 +769,7 @@ function PanelExperto() {
 
                 {profesionEsOtraEdicion && (
                   <div>
-                    <label className="block mb-1">¿Cual otra profesion?</label>
+                    <label className="block mb-1">¿Cuál otra profesión?</label>
                     <input
                       type="text"
                       name="otraProfesionTexto"
@@ -828,7 +828,7 @@ function PanelExperto() {
 
             {experto.rol !== 'cliente' && (
               <div>
-                <label className="block mb-1">Descripcion</label>
+                <label className="block mb-1">Descripción</label>
                 <textarea
                   name="descripcion"
                   value={formData.descripcion}
@@ -839,7 +839,7 @@ function PanelExperto() {
             )}
 
             <div>
-              <label className="block mb-2">Modalidad de atencion</label>
+              <label className="block mb-2">Modalidad de atención</label>
               <div className="flex gap-4">
                 <label className="flex items-center gap-2">
                   <input
@@ -937,7 +937,7 @@ function PanelExperto() {
 
             {experto.rol !== 'cliente' && (
               <div>
-                <label className="block mb-1">Anos de experiencia</label>
+                <label className="block mb-1">Años de experiencia</label>
                 <input
                   type="number"
                   name="anosExperiencia"

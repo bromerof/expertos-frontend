@@ -190,7 +190,7 @@ function EstadisticasAdmin() {
                 <>
                   <p className="text-sm text-gray-600 mt-1">
                     Estos expertos pagan el plan Pro pero todavia no han recibido ninguna oportunidad.
-                    Vale la pena revisar su perfil o su categoria.
+                    Vale la pena revisar su perfil o su categoría.
                   </p>
                   <ul className="text-sm text-gray-700 list-disc list-inside mt-2">
                     {stats.expertosProSinContactos.nombres.map((nombre, i) => (

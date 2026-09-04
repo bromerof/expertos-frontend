@@ -69,7 +69,7 @@ function RegistroCliente() {
     e.preventDefault()
     setError('')
 
-    const confirmar = window.confirm('Revisa que toda tu informacion este correcta antes de continuar. Deseas registrarte con estos datos?')
+    const confirmar = window.confirm('Revisa que toda tu información esté correcta antes de continuar. ¿Deseas registrarte con estos datos?')
     if (!confirmar) return
 
     if (!municipioId && !formData.coberturaVirtualNacional) {
@@ -78,7 +78,7 @@ function RegistroCliente() {
     }
 
     if (!aceptaTerminos || !aceptaDatos) {
-      setError('Debes aceptar los Terminos de Uso y autorizar el tratamiento de tus datos personales')
+      setError('Debes aceptar los Términos de Uso y autorizar el tratamiento de tus datos personales')
       return
     }
 
@@ -174,14 +174,14 @@ function RegistroCliente() {
               onChange={handleChange}
               className="w-full p-2 border rounded"
             >
-              <option value="CC">Cedula de Ciudadania</option>
-              <option value="CE">Cedula de Extranjeria</option>
+              <option value="CC">Cédula de Ciudadanía</option>
+              <option value="CE">Cédula de Extranjería</option>
               <option value="Pasaporte">Pasaporte</option>
             </select>
           </div>
 
           <div>
-            <label className="block mb-1">Numero de documento</label>
+            <label className="block mb-1">Número de documento</label>
             <input
               type="text"
               name="numeroDocumento"
@@ -194,7 +194,7 @@ function RegistroCliente() {
           </div>
 
           <div>
-            <label className="block mb-1">Correo electronico</label>
+            <label className="block mb-1">Correo electrónico</label>
             <input
               type="email"
               name="correo"
@@ -323,7 +323,7 @@ function RegistroCliente() {
               <span>
                 Acepto los{' '}
                 <Link to="/terminos" target="_blank" rel="noopener noreferrer" className="text-[#2C3E50] underline">
-                  Terminos de Uso
+                  Términos de Uso
                 </Link>
                 .
               </span>
@@ -336,9 +336,9 @@ function RegistroCliente() {
                 className="mt-1"
               />
               <span>
-                He leido y acepto la{' '}
+                He leído y acepto la{' '}
                 <Link to="/politica-datos" target="_blank" rel="noopener noreferrer" className="text-[#2C3E50] underline">
-                  Politica de Tratamiento de Datos Personales
+                  Política de Tratamiento de Datos Personales
                 </Link>
                 .
               </span>
@@ -351,7 +351,7 @@ function RegistroCliente() {
                 className="mt-1"
               />
               <span>
-                Autorizo el envio de comunicaciones comerciales, promociones y novedades de Expertos (opcional).
+                Autorizo el envío de comunicaciones comerciales, promociones y novedades de Expertos (opcional).
               </span>
             </label>
           </div>

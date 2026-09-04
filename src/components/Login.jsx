@@ -24,7 +24,7 @@ function Login() {
       .then(async (res) => {
         const data = await res.json()
         if (!res.ok) {
-          throw new Error(data.mensaje || 'Error al iniciar sesion')
+          throw new Error(data.mensaje || 'Error al iniciar sesión')
         }
         return data
       })
@@ -49,7 +49,7 @@ function Login() {
             <Header />
 
       <div className="p-6 max-w-md">
-        <h2 className="text-xl font-bold mb-4">Iniciar sesion</h2>
+        <h2 className="text-xl font-bold mb-4">Iniciar sesión</h2>
 
         {error && (
           <p className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</p>
@@ -69,7 +69,7 @@ function Login() {
           </div>
 
           <div>
-            <label className="block mb-1">Contrasena</label>
+            <label className="block mb-1">Contraseña</label>
             <input
               type="password"
               value={contrasena}
@@ -95,7 +95,7 @@ function Login() {
               <option value="admin">Entrar como Administrador</option>
             </select>
             <p className="text-xs text-gray-500 mt-1">
-              Selecciona el tipo de cuenta con la que quieres iniciar sesion.
+              Selecciona el tipo de cuenta con la que quieres iniciar sesión.
             </p>
           </div>
 
@@ -103,7 +103,7 @@ function Login() {
             type="submit"
             className="mt-2 px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f]"
           >
-            Iniciar sesion
+            Iniciar sesión
           </button>
         </form>
       </div>

@@ -89,7 +89,7 @@ function Header({ children }) {
               to="/login"
               className="text-white underline cursor-pointer hover:text-gray-300"
             >
-              Iniciar sesion
+              Iniciar sesión
             </Link>
           </>
         )}
@@ -110,7 +110,7 @@ function Header({ children }) {
             onClick={handleLogout}
             className="text-white underline cursor-pointer hover:text-gray-300"
           >
-            Cerrar sesion
+            Cerrar sesión
           </button>
         )}
 

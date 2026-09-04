@@ -6,14 +6,14 @@ const secciones = [
     p: [
       'Expertos es una plataforma digital operada por [NOMBRE LEGAL DE LA EMPRESA O PERSONA RESPONSABLE], identificada con [NIT/IDENTIFICACION], con domicilio en [CIUDAD, COLOMBIA].',
       'Correo de contacto: [CORREO]',
-      'Expertos facilita la interaccion entre clientes y profesionales, permitiendo la publicacion, busqueda, solicitud y contratacion de servicios profesionales.'
+      'Expertos facilita la interacción entre clientes y profesionales, permitiendo la publicación, busqueda, solicitud y contratación de servicios profesionales.'
     ]
   },
   {
     h: '2. Definiciones',
     p: ['Para efectos de estos terminos:'],
     ul: [
-      'Plataforma: sitio web, aplicacion y demas medios digitales administrados por Expertos.',
+      'Plataforma: sitio web, aplicación y demas medios digitales administrados por Expertos.',
       'Cliente: persona natural o juridica que utiliza Expertos para buscar, solicitar o contratar servicios profesionales.',
       'Experto: persona natural o juridica que ofrece sus conocimientos, habilidades, experiencia o servicios profesionales a traves de Expertos.',
       'Usuario: cualquier persona que acceda o utilice la Plataforma, incluyendo Clientes y Expertos.',
@@ -27,44 +27,44 @@ const secciones = [
       'Crear y administrar perfiles.',
       'Buscar profesionales.',
       'Publicar o solicitar necesidades.',
-      'Consultar informacion profesional.',
+      'Consultar información profesional.',
       'Comunicarse con otros usuarios.',
       'Solicitar o acordar servicios.',
       'Consultar el estado de sus solicitudes o contrataciones.',
-      'Calificar y recibir calificaciones, cuando esta funcion este disponible.'
+      'Calificar y recibir calificaciones, cuando esta función este disponible.'
     ],
     p2: [
-      'Las condiciones particulares de cada servicio, incluyendo alcance, precio, duracion, modalidad, fechas, entregables y demas condiciones, podran ser acordadas entre el Cliente y el Experto.',
-      'Expertos no establece necesariamente una unica modalidad de contratacion o cobro. Las partes podran acordar las condiciones del servicio de acuerdo con las funcionalidades disponibles en la Plataforma y la legislacion aplicable.'
+      'Las condiciones particulares de cada servicio, incluyendo alcance, precio, duración, modalidad, fechas, entregables y demas condiciones, podrán ser acordadas entre el Cliente y el Experto.',
+      'Expertos no establece necesariamente una única modalidad de contratación o cobro. Las partes podrán acordar las condiciones del servicio de acuerdo con las funcionalidades disponibles en la Plataforma y la legislación aplicable.'
     ]
   },
   {
     h: '4. Registro de usuarios',
-    p: ['Para utilizar determinadas funcionalidades sera necesario crear una cuenta.', 'El usuario se compromete a proporcionar informacion verdadera, completa y actualizada.', 'El usuario es responsable de:'],
+    p: ['Para utilizar determinadas funcionalidades sera necesario crear una cuenta.', 'El usuario se compromete a proporcionar información verdadera, completa y actualizada.', 'El usuario es responsable de:'],
     ul: [
       'Mantener la confidencialidad de sus credenciales.',
       'No compartir su contraseña.',
       'Informar a Expertos sobre cualquier acceso no autorizado.',
-      'Mantener actualizada su informacion.',
-      'No crear cuentas utilizando informacion falsa o perteneciente a otra persona.'
+      'Mantener actualizada su información.',
+      'No crear cuentas utilizando información falsa o perteneciente a otra persona.'
     ],
-    p2: ['Expertos podra solicitar informacion adicional para verificar la identidad o informacion proporcionada por un usuario cuando resulte necesario.']
+    p2: ['Expertos podra solicitar información adicional para verificar la identidad o información proporcionada por un usuario cuando resulte necesario.']
   },
   {
     h: '5. Requisitos para los Expertos',
     p: [
-      'Los Expertos deberan proporcionar informacion veraz sobre su experiencia, formacion, conocimientos, certificaciones, habilidades y servicios ofrecidos.',
-      'El Experto sera responsable de garantizar que la informacion publicada en su perfil sea cierta, actualizada y no induzca a error.',
-      'Cuando una actividad profesional requiera licencia, matricula, tarjeta profesional, certificacion, autorizacion o cualquier otro requisito legal, el Experto sera responsable de contar con las habilitaciones correspondientes.',
-      'Expertos podra solicitar documentos o informacion para procesos de verificacion.',
-      'La verificacion realizada por Expertos no constituye una garantia absoluta sobre la calidad, idoneidad o resultado de los servicios prestados por un Experto.'
+      'Los Expertos deberán proporcionar información veraz sobre su experiencia, formación, conocimientos, certificaciones, habilidades y servicios ofrecidos.',
+      'El Experto sera responsable de garantizar que la información publicada en su perfil sea cierta, actualizada y no induzca a error.',
+      'Cuando una actividad profesional requiera licencia, matricula, tarjeta profesional, certificación, autorización o cualquier otro requisito legal, el Experto sera responsable de contar con las habilitaciones correspondientes.',
+      'Expertos podra solicitar documentos o información para procesos de verificación.',
+      'La verificación realizada por Expertos no constituye una garantía absoluta sobre la calidad, idoneidad o resultado de los servicios prestados por un Experto.'
     ]
   },
   {
     h: '6. Responsabilidades del Cliente',
     p: ['El Cliente se compromete a:'],
     ul: [
-      'Proporcionar informacion verdadera sobre sus necesidades.',
+      'Proporcionar información verdadera sobre sus necesidades.',
       'Utilizar la Plataforma de manera licita.',
       'Respetar a los Expertos.',
       'Cumplir las condiciones acordadas para los servicios contratados.',
@@ -76,27 +76,27 @@ const secciones = [
     h: '7. Responsabilidades del Experto',
     p: ['El Experto se compromete a:'],
     ul: [
-      'Proporcionar informacion verdadera sobre sus capacidades y experiencia.',
+      'Proporcionar información verdadera sobre sus capacidades y experiencia.',
       'Prestar los servicios de acuerdo con las condiciones acordadas con el Cliente.',
       'Cumplir las obligaciones legales aplicables a su actividad profesional.',
-      'Respetar la confidencialidad de la informacion recibida de los Clientes.',
-      'No utilizar informacion de los Clientes para fines diferentes a los autorizados.',
+      'Respetar la confidencialidad de la información recibida de los Clientes.',
+      'No utilizar información de los Clientes para fines diferentes a los autorizados.',
       'No realizar actividades fraudulentas, ilegales, discriminatorias o engañosas.'
     ]
   },
   {
     h: '8. Acuerdos entre Clientes y Expertos',
     p: [
-      'Las relaciones contractuales que surjan entre un Cliente y un Experto deberan regirse por las condiciones que las partes acuerden y por la legislacion aplicable.',
-      'Expertos podra proporcionar herramientas para facilitar la comunicacion y contratacion, pero no sustituye los acuerdos que correspondan entre las partes.',
-      'Cuando la Plataforma ofrezca mecanismos de pago, facturacion, contratacion, garantias o gestion de controversias, estos estaran sujetos a las condiciones particulares informadas al usuario.'
+      'Las relaciones contractuales que surjan entre un Cliente y un Experto deberán regirse por las condiciones que las partes acuerden y por la legislación aplicable.',
+      'Expertos podra proporcionar herramientas para facilitar la comunicación y contratación, pero no sustituye los acuerdos que correspondan entre las partes.',
+      'Cuando la Plataforma ofrezca mecanismos de pago, facturación, contratación, garantías o gestión de controversias, estos estarán sujetos a las condiciones particulares informadas al usuario.'
     ]
   },
   {
     h: '9. Pagos',
     p: [
-      'Cuando Expertos habilite funcionalidades de pago dentro de la Plataforma, las condiciones relacionadas con tarifas, comisiones, medios de pago, reembolsos, cancelaciones y demas aspectos economicos seran informadas antes de realizar la operacion correspondiente.',
-      'Cuando el pago sea acordado directamente entre Cliente y Experto por fuera de las funcionalidades de pago de Expertos, las condiciones de dicha operacion seran responsabilidad de las partes.'
+      'Cuando Expertos habilite funcionalidades de pago dentro de la Plataforma, las condiciones relacionadas con tarifas, comisiones, medios de pago, reembolsos, cancelaciones y demas aspectos economicos seran informadas antes de realizar la operación correspondiente.',
+      'Cuando el pago sea acordado directamente entre Cliente y Experto por fuera de las funcionalidades de pago de Expertos, las condiciones de dicha operación seran responsabilidad de las partes.'
     ]
   },
   {
@@ -113,34 +113,34 @@ const secciones = [
     ul: [
       'Realizar actividades ilicitas.',
       'Suplantar a otras personas.',
-      'Publicar informacion falsa o engañosa.',
+      'Publicar información falsa o engañosa.',
       'Intentar acceder a cuentas ajenas.',
-      'Introducir virus, codigo malicioso o mecanismos que afecten la Plataforma.',
-      'Utilizar informacion de otros usuarios para fines no autorizados.',
-      'Realizar acoso, amenazas, discriminacion o conductas abusivas.',
+      'Introducir virus, código malicioso o mecanismos que afecten la Plataforma.',
+      'Utilizar información de otros usuarios para fines no autorizados.',
+      'Realizar acoso, amenazas, discriminación o conductas abusivas.',
       'Publicar contenido que infrinja derechos de terceros.',
       'Utilizar la Plataforma para actividades fraudulentas.',
       'Manipular artificialmente calificaciones o reseñas.',
-      'Utilizar herramientas automatizadas para extraer informacion de la Plataforma sin autorizacion.'
+      'Utilizar herramientas automatizadas para extraer información de la Plataforma sin autorización.'
     ]
   },
   {
     h: '12. Perfiles, calificaciones y reseñas',
     p: [
-      'Cuando esta funcionalidad este disponible, los usuarios podran publicar calificaciones y comentarios sobre las experiencias obtenidas a traves de la Plataforma.',
-      'Las calificaciones deberan ser honestas y basarse en experiencias reales.',
-      'Expertos podra retirar contenido que incumpla estos Terminos, la legislacion aplicable o las reglas de la comunidad.'
+      'Cuando esta funcionalidad este disponible, los usuarios podrán publicar calificaciones y comentarios sobre las experiencias obtenidas a traves de la Plataforma.',
+      'Las calificaciones deberán ser honestas y basarse en experiencias reales.',
+      'Expertos podra retirar contenido que incumpla estos Terminos, la legislación aplicable o las reglas de la comunidad.'
     ]
   },
   {
-    h: '13. Suspension o cancelacion de cuentas',
+    h: '13. Suspension o cancelación de cuentas',
     p: ['Expertos podra suspender, limitar o cancelar una cuenta cuando existan razones para considerar que el usuario:'],
     ul: [
       'Incumple estos Terminos.',
-      'Proporciono informacion falsa.',
+      'Proporciono información falsa.',
       'Utiliza la Plataforma de manera fraudulenta.',
       'Representa un riesgo para otros usuarios o para la Plataforma.',
-      'Incumple la legislacion aplicable.'
+      'Incumple la legislación aplicable.'
     ],
     p2: ['Cuando resulte procedente, Expertos podra informar al usuario las razones de la medida adoptada.']
   },
@@ -154,8 +154,8 @@ const secciones = [
   {
     h: '15. Limitacion de responsabilidad',
     p: [
-      'Expertos actua como plataforma de conexion y facilitacion entre Clientes y Expertos, salvo que expresamente se indique lo contrario para un servicio determinado.',
-      'En consecuencia, cada Experto es responsable de los servicios que ofrece y presta, de la informacion que publica y del cumplimiento de las obligaciones legales relacionadas con su actividad.',
+      'Expertos actua como plataforma de conexion y facilitación entre Clientes y Expertos, salvo que expresamente se indique lo contrario para un servicio determinado.',
+      'En consecuencia, cada Experto es responsable de los servicios que ofrece y presta, de la información que pública y del cumplimiento de las obligaciones legales relacionadas con su actividad.',
       'Los Clientes son responsables de las decisiones que adopten al seleccionar y contratar a un Experto.',
       'Lo anterior se aplicara sin perjuicio de las responsabilidades que legalmente correspondan a Expertos y de los derechos irrenunciables de los consumidores cuando resulten aplicables.'
     ]
@@ -163,7 +163,7 @@ const secciones = [
   {
     h: '16. Propiedad intelectual',
     p: [
-      'Los elementos que conforman la Plataforma, incluyendo su software, diseño, marca, logotipos, textos, interfaces y demas elementos protegibles, pertenecen a Expertos o a sus respectivos titulares y estan protegidos por la legislacion aplicable.',
+      'Los elementos que conforman la Plataforma, incluyendo su software, diseño, marca, logotipos, textos, interfaces y demas elementos protegibles, pertenecen a Expertos o a sus respectivos titulares y estan protegidos por la legislación aplicable.',
       'El uso de la Plataforma no concede al usuario derechos de propiedad sobre dichos elementos.'
     ]
   },
@@ -177,7 +177,7 @@ const secciones = [
   {
     h: '18. Modificaciones',
     p: [
-      'Expertos podra modificar estos Terminos cuando resulte necesario por cambios en la Plataforma, servicios, legislacion o modelo de operacion.',
+      'Expertos podra modificar estos Terminos cuando resulte necesario por cambios en la Plataforma, servicios, legislación o modelo de operación.',
       'Las modificaciones seran informadas a traves de los medios disponibles y entraran en vigencia en la fecha indicada en la version actualizada.'
     ]
   },
@@ -199,7 +199,7 @@ function Terminos() {
 
       <div className="p-6 max-w-2xl mx-auto">
         <h2 className="text-2xl font-bold text-[#2C3E50] mb-1">Terminos de Uso de Expertos</h2>
-        <p className="text-sm text-gray-500 mb-6">Ultima actualizacion: [FECHA]</p>
+        <p className="text-sm text-gray-500 mb-6">Ultima actualización: [FECHA]</p>
 
         <p className="text-gray-700 text-sm mb-6">
           Bienvenido a Expertos, una plataforma digital que facilita la conexion entre personas y empresas
@@ -209,16 +209,16 @@ function Terminos() {
         </p>
 
         <div className="flex flex-col gap-5 text-gray-700 text-sm leading-relaxed">
-          {secciones.map((seccion) => (
-            <section key={seccion.h}>
-              <h3 className="font-bold text-[#2C3E50] mb-1">{seccion.h}</h3>
-              {seccion.p && seccion.p.map((texto, i) => <p key={i} className="mb-1">{texto}</p>)}
-              {seccion.ul && (
+          {secciones.map((sección) => (
+            <section key={sección.h}>
+              <h3 className="font-bold text-[#2C3E50] mb-1">{sección.h}</h3>
+              {sección.p && sección.p.map((texto, i) => <p key={i} className="mb-1">{texto}</p>)}
+              {sección.ul && (
                 <ul className="list-disc list-inside mb-1">
-                  {seccion.ul.map((item, i) => <li key={i}>{item}</li>)}
+                  {sección.ul.map((item, i) => <li key={i}>{item}</li>)}
                 </ul>
               )}
-              {seccion.p2 && seccion.p2.map((texto, i) => <p key={i} className="mb-1">{texto}</p>)}
+              {sección.p2 && sección.p2.map((texto, i) => <p key={i} className="mb-1">{texto}</p>)}
             </section>
           ))}
 

@@ -116,7 +116,7 @@ function Buscar() {
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleBuscar()}
-            placeholder="Buscar por nombre o categoria..."
+            placeholder="Buscar por nombre o categoría..."
             className="w-full p-3 rounded border border-gray-300"
           />
           <button
