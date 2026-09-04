@@ -84,6 +84,7 @@ function ActivarPro() {
             <li>Puedes publicar varias profesiones en tu cuenta</li>
             <li>Acceso a Oportunidades (necesidades publicadas por clientes)</li>
             <li>Estadisticas de vistas, contactos y apariciones en busquedas</li>
+            <li>Galería de fotos de tus trabajos</li>
           </ul>
         </div>
 

@@ -303,6 +303,10 @@ function Landing() {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-green-600 font-bold">✓</span>
+              <span>Galería de fotos de tus trabajos</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-600 font-bold">✓</span>
               <span>Todo lo del plan Free, incluido</span>
             </li>
           </ul>

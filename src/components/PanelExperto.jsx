@@ -370,6 +370,64 @@ function PanelExperto() {
       })
   }
 
+  const handleSubirFotoGaleria = (e) => {
+    const archivo = e.target.files[0]
+    if (!archivo) return
+
+    if (!['image/jpeg', 'image/png', 'image/jpg'].includes(archivo.type)) {
+      setError('Solo se permiten archivos JPG o PNG')
+      return
+    }
+    if (archivo.size > 5 * 1024 * 1024) {
+      setError('El archivo no debe superar los 5MB')
+      return
+    }
+
+    const datosFormulario = new FormData()
+    datosFormulario.append('foto', archivo)
+
+    fetch(API_URL + '/api/expertos/' + expertoId + '/galeria', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: datosFormulario
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al subir la foto a la galería')
+        }
+        return data
+      })
+      .then(() => {
+        cargarExperto()
+      })
+      .catch((err) => {
+        setError(err.message)
+      })
+  }
+
+  const handleEliminarFotoGaleria = (indice) => {
+    const confirmar = window.confirm('¿Eliminar esta foto de tu galería?')
+    if (!confirmar) return
+
+    fetch(API_URL + '/api/expertos/' + expertoId + '/galeria/' + indice, {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al eliminar la foto')
+        }
+        return data
+      })
+      .then(() => {
+        cargarExperto()
+      })
+      .catch((err) => {
+        setError(err.message)
+      })
+  }
     const handleSubirFotoDocumentoFrente = (e) => {
     const archivo = e.target.files[0]
     if (!archivo) return
@@ -510,6 +568,7 @@ function PanelExperto() {
               <li>Apareces primero en los resultados de busqueda</li>
               <li>Sello "Pro" visible en tu perfil y tarjeta</li>
               <li>Puedes publicar varias profesiones en tu cuenta</li>
+              <li>Galería de fotos de tus trabajos</li>
             </ul>
             <p className="text-xs text-gray-300 mb-2">
               Muy pronto podras activar tu plan Pro directamente desde aqui.
@@ -582,6 +641,52 @@ function PanelExperto() {
                   <p className="text-xs text-gray-300">
                     Con el plan Pro puedes ver cuantas personas visitan tu perfil, te contactan, y en cuantas
                     busquedas apareces.
+                  </p>
+                </div>
+              )}
+
+              {experto.rol === 'experto' && experto.verificado && experto.plan === 'pro' && (
+                <div className="mb-3 p-3 bg-white border border-gray-200 rounded max-w-sm">
+                  <p className="font-bold text-sm mb-2 flex items-center gap-2">
+                    Galería de trabajos
+                    <span className="px-2 py-0.5 bg-yellow-400 text-[#2C3E50] text-xs font-bold rounded-full">
+                      ⭐ Pro
+                    </span>
+                  </p>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Muestra fotos de tus trabajos anteriores (hasta {6} fotos).
+                  </p>
+
+                  {experto.galeriaFotos && experto.galeriaFotos.length > 0 && (
+                    <div className="grid grid-cols-3 gap-2 mb-3">
+                      {experto.galeriaFotos.map((url, indice) => (
+                        <div key={indice} className="relative">
+                          <img src={url} alt={'Trabajo ' + (indice + 1)} className="w-full h-20 object-cover rounded" />
+                          <button
+                            onClick={() => handleEliminarFotoGaleria(indice)}
+                            className="absolute -top-1 -right-1 w-5 h-5 bg-[#E74C3C] text-white rounded-full text-xs cursor-pointer hover:bg-[#c0392b]"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {(!experto.galeriaFotos || experto.galeriaFotos.length < 6) && (
+                    <label className="inline-block px-3 py-2 bg-[#2C3E50] text-white text-sm rounded cursor-pointer hover:bg-[#1a252f]">
+                      + Agregar foto
+                      <input type="file" accept="image/png, image/jpeg" onChange={handleSubirFotoGaleria} className="hidden" />
+                    </label>
+                  )}
+                </div>
+              )}
+
+              {experto.rol === 'experto' && experto.verificado && experto.plan === 'gratuito' && (
+                <div className="mb-3 p-3 bg-[#2C3E50] rounded max-w-sm text-white">
+                  <p className="font-bold text-sm mb-1">📸 Galería de trabajos exclusiva del plan Pro</p>
+                  <p className="text-xs text-gray-300">
+                    Con el plan Pro puedes mostrar fotos de tus trabajos anteriores en tu perfil.
                   </p>
                 </div>
               )}

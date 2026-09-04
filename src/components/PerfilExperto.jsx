@@ -104,7 +104,7 @@ function PerfilExperto() {
           )}
           <p>Profesión: {experto.profesion && experto.profesion.nombre}</p>
           {experto.otraProfesionTexto && (
-            <p>¿Cual otra profesion?: {experto.otraProfesionTexto}</p>
+            <p>¿Cuál otra profesión?: {experto.otraProfesionTexto}</p>
           )}
           {experto.profesionesAdicionales && experto.profesionesAdicionales.length > 0 && (
             <p>
@@ -122,6 +122,22 @@ function PerfilExperto() {
 
           {(!experto.ubicaciones || experto.ubicaciones.length === 0) && !experto.coberturaVirtualNacional && (
             <p>Ubicaciones: No especificadas</p>
+          )}
+
+          {experto.galeriaFotos && experto.galeriaFotos.length > 0 && (
+            <div className="mt-4">
+              <p className="font-bold mb-2">Galería de trabajos</p>
+              <div className="grid grid-cols-3 gap-2 max-w-md">
+                {experto.galeriaFotos.map((url, indice) => (
+                  <img
+                    key={indice}
+                    src={url}
+                    alt={'Trabajo ' + (indice + 1)}
+                    className="w-full h-24 object-cover rounded"
+                  />
+                ))}
+              </div>
+            </div>
           )}
 
           <p>Años de experiencia: {experto.anosExperiencia}</p>
