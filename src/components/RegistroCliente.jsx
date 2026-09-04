@@ -155,6 +155,9 @@ function RegistroCliente() {
 
       <div className="p-6 max-w-lg">
         <h2 className="text-xl font-bold mb-1">Registro de cliente</h2>
+        <p className="text-sm text-gray-600 mb-1">
+          Regístrate como cliente para comenzar a buscar el experto que necesitas.
+        </p>
         <p className="text-sm text-yellow-600 mb-4">
           Los campos marcados con <span className="font-bold">*</span> son obligatorios.
         </p>

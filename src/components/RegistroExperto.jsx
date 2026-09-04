@@ -250,6 +250,9 @@ function RegistroExperto() {
 
       <div className="p-6 max-w-lg">
         <h2 className="text-xl font-bold mb-1">Registro de experto</h2>
+        <p className="text-sm text-gray-600 mb-1">
+          Regístrate como experto para publicar tu perfil y empezar a recibir clientes.
+        </p>
         <p className="text-sm text-yellow-600 font-semibold mb-1">
           {planElegido === 'pro'
             ? '⭐ Te vas a registrar con el plan Pro — primer mes gratis.'
