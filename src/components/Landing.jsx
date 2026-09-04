@@ -95,11 +95,10 @@ function Landing() {
       <section className="px-6 py-16 text-center max-w-3xl mx-auto">
         <p className="text-[#2C3E50] font-semibold mb-2">👋 ¡Bienvenido a EXPERTOS!</p>
         <h1 className="text-4xl md:text-5xl font-bold text-[#2C3E50] mb-4">
-          Encuentra al experto que necesitas.
+          Encuentra personas con experiencia para resolver lo que necesitas.
         </h1>
         <p className="text-lg text-gray-600 mb-8">
-          Conecta con profesionales especializados y encuentra soluciones para tus necesidades,
-          de forma fácil, segura y flexible.
+          Busca por profesión, servicio o categoría, revisa su experiencia y contacta directamente.
         </p>
 
         <form onSubmit={handleBuscarHero} className="flex gap-2 max-w-xl mx-auto">
@@ -206,8 +205,8 @@ function Landing() {
         <h2 className="text-2xl font-bold text-[#2C3E50] mb-8 text-center">¿Por qué EXPERTOS?</h2>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
-            <p className="font-bold text-[#2C3E50]">🔹 Profesionales especializados</p>
-            <p className="text-gray-600">Encuentra personas con conocimientos y experiencia.</p>
+            <p className="font-bold text-[#2C3E50]">🔹 Experiencia que genera confianza</p>
+            <p className="text-gray-600">Conoce los conocimientos, experiencia y especialidades de cada experto antes de contactarlo.</p>
           </div>
           <div>
             <p className="font-bold text-[#2C3E50]">🔹 Información transparente</p>
@@ -228,7 +227,7 @@ function Landing() {
       <section className="px-6 py-12 bg-[#2C3E50] text-white text-center">
         <h2 className="text-2xl font-bold mb-2">Tu experiencia tiene valor.</h2>
         <p className="mb-6 max-w-xl mx-auto">
-          Convierte tus conocimientos y habilidades en nuevas oportunidades profesionales.
+          Convierte tus conocimientos y habilidades en nuevas oportunidades.
         </p>
         <Link
           to="/elegir-plan"
