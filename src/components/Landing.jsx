@@ -245,6 +245,24 @@ function Landing() {
         </div>
       </section>
 
+      {/* Aclaracion de confianza: como funciona la relacion cliente-experto */}
+      <section className="px-6 py-12 max-w-3xl mx-auto">
+        <div className="bg-[#F5F5F5] rounded-lg p-6 md:p-8">
+          <h3 className="text-xl font-bold text-[#2C3E50] mb-3">¿EXPERTOS presta el servicio?</h3>
+          <p className="text-gray-700 mb-4">
+            No. EXPERTOS facilita el contacto entre clientes y expertos. El servicio en sí se acuerda
+            y se presta directamente entre ambas partes — nosotros no intervenimos en el precio, el
+            alcance ni las condiciones del trabajo.
+          </p>
+          <p className="font-bold text-[#2C3E50] mb-2">¿Cómo te ayudamos a decidir con confianza?</p>
+          <ul className="text-gray-700 list-disc list-inside space-y-1">
+            <li>Cada cuenta pasa por una revisión de identidad de un administrador antes de ser aprobada.</li>
+            <li>Las calificaciones son públicas y las dejan clientes y expertos que ya se contactaron entre sí.</li>
+            <li>El contacto es directo por WhatsApp, sin intermediarios ni información oculta.</li>
+          </ul>
+        </div>
+      </section>
+
       {/* Seccion para expertos */}
       <section className="px-6 py-12 bg-[#2C3E50] text-white text-center">
         <h2 className="text-2xl font-bold mb-2">Tu experiencia tiene valor.</h2>
