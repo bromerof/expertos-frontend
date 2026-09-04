@@ -65,7 +65,7 @@ function Landing() {
             Cómo funciona
           </a>
           <Link to="/elegir-plan" className="underline cursor-pointer hover:text-gray-300">
-            Conviértete en experto
+            Regístrate como experto
           </Link>
         </nav>
 
@@ -93,6 +93,7 @@ function Landing() {
 
       {/* Hero */}
       <section className="px-6 py-16 text-center max-w-3xl mx-auto">
+        <p className="text-[#2C3E50] font-semibold mb-2">👋 ¡Bienvenido a EXPERTOS!</p>
         <h1 className="text-4xl md:text-5xl font-bold text-[#2C3E50] mb-4">
           Encuentra al experto que necesitas.
         </h1>
@@ -187,7 +188,7 @@ function Landing() {
             <div>
               <p className="text-sm text-gray-400 font-bold">02</p>
               <h3 className="text-lg font-bold text-[#2C3E50] mb-1">Conecta</h3>
-              <p className="text-gray-600">💬 Revisa su perfil, experiencia y contacta con él.</p>
+              <p className="text-gray-600">💬 Revisa su perfil, experiencia y ponte en contacto directamente.</p>
             </div>
             <div>
               <p className="text-sm text-gray-400 font-bold">03</p>
@@ -233,7 +234,7 @@ function Landing() {
           to="/elegir-plan"
           className="inline-block px-6 py-3 bg-white text-[#2C3E50] rounded font-bold cursor-pointer hover:bg-gray-200 mb-8"
         >
-          Conviértete en experto →
+          Regístrate como experto →
         </Link>
 
         <div className="max-w-3xl mx-auto grid md:grid-cols-3 gap-6 text-left">
@@ -245,6 +246,59 @@ function Landing() {
           </div>
           <div>
             <p className="font-bold">3. Conecta con clientes</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Seccion comercial: EXPERTO PRO */}
+      <section className="px-6 py-12 bg-[#F5F5F5]">
+        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8 border-2 border-yellow-400 relative">
+          <span className="absolute -top-4 left-8 px-3 py-1 bg-yellow-400 text-[#2C3E50] text-sm font-bold rounded-full">
+            ⭐ Haz visible tu experiencia
+          </span>
+          <h2 className="text-3xl font-bold text-[#2C3E50] mt-2 mb-1">EXPERTO PRO</h2>
+          <p className="text-gray-600 mb-6">Todo lo que necesitas para destacar entre los demás expertos.</p>
+
+          <ul className="grid sm:grid-cols-2 gap-3 mb-6">
+            <li className="flex items-start gap-2">
+              <span className="text-green-600 font-bold">✓</span>
+              <span>Apareces primero en los resultados de búsqueda</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-600 font-bold">✓</span>
+              <span>Sello "Pro" visible en tu perfil y tarjeta</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-600 font-bold">✓</span>
+              <span>Publica varias profesiones en tu cuenta</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-600 font-bold">✓</span>
+              <span>Acceso a Oportunidades: necesidades publicadas por clientes</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-600 font-bold">✓</span>
+              <span>Estadísticas de vistas, contactos y búsquedas</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-green-600 font-bold">✓</span>
+              <span>Todo lo del plan Free, incluido</span>
+            </li>
+          </ul>
+
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 border-t border-gray-200 pt-6">
+            <div>
+              <p className="text-sm text-green-700 font-bold mb-1">Primer mes GRATIS</p>
+              <p className="text-2xl font-bold text-[#2C3E50]">
+                $4.900<span className="text-base font-normal text-gray-500"> COP/mes después</span>
+              </p>
+            </div>
+            <Link
+              to="/registro?plan=pro"
+              className="px-6 py-3 bg-yellow-400 text-[#2C3E50] rounded font-bold text-center cursor-pointer hover:bg-yellow-500 whitespace-nowrap"
+            >
+              Quiero ser EXPERTO PRO →
+            </Link>
           </div>
         </div>
       </section>
@@ -307,7 +361,7 @@ function Landing() {
 
         <p className="text-gray-600 mb-1">¿Tienes conocimientos para compartir?</p>
         <Link to="/elegir-plan" className="text-[#2C3E50] underline font-bold cursor-pointer hover:text-[#1a252f]">
-          Conviértete en experto →
+          Regístrate como experto →
         </Link>
       </section>
 
