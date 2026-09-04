@@ -40,6 +40,14 @@ function RegistroCliente() {
       .catch(err => console.error('Error al cargar departamentos:', err))
   }, [])
 
+  // Cuando aparece un error, llevamos la pantalla arriba del todo para que se
+  // vea sin importar en que parte del formulario estaba la persona
+  useEffect(() => {
+    if (error) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [error])
+
   const cargarMunicipios = (idDepartamento) => {
     if (municipiosPorDepartamento[idDepartamento]) {
       return
@@ -146,15 +154,18 @@ function RegistroCliente() {
       <Header />
 
       <div className="p-6 max-w-lg">
-        <h2 className="text-xl font-bold mb-4">Registro de cliente</h2>
+        <h2 className="text-xl font-bold mb-1">Registro de cliente</h2>
+        <p className="text-sm text-yellow-600 mb-4">
+          Los campos marcados con <span className="font-bold">*</span> son obligatorios.
+        </p>
 
         {error && (
-          <p className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</p>
+          <p className="bg-red-100 text-red-700 p-3 rounded mb-4 font-semibold">{error}</p>
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" autoComplete="off">
           <div>
-            <label className="block mb-1">Nombre completo</label>
+            <label className="block mb-1">Nombre completo <span className="text-red-600">*</span></label>
             <input
               type="text"
               name="nombre"
@@ -167,7 +178,7 @@ function RegistroCliente() {
           </div>
 
           <div>
-            <label className="block mb-1">Tipo de documento</label>
+            <label className="block mb-1">Tipo de documento <span className="text-red-600">*</span></label>
             <select
               name="tipoDocumento"
               value={formData.tipoDocumento}
@@ -181,7 +192,7 @@ function RegistroCliente() {
           </div>
 
           <div>
-            <label className="block mb-1">Número de documento</label>
+            <label className="block mb-1">Número de documento <span className="text-red-600">*</span></label>
             <input
               type="text"
               name="numeroDocumento"
@@ -191,10 +202,13 @@ function RegistroCliente() {
               autoComplete="off"
               required
             />
+            <p className="text-xs text-yellow-600 mt-1">
+              Debe ser único: no puede estar ya registrado en otra cuenta de cliente.
+            </p>
           </div>
 
           <div>
-            <label className="block mb-1">Correo electrónico</label>
+            <label className="block mb-1">Correo electrónico <span className="text-red-600">*</span></label>
             <input
               type="email"
               name="correo"
@@ -207,7 +221,7 @@ function RegistroCliente() {
           </div>
 
           <div>
-            <label className="block mb-1">WhatsApp</label>
+            <label className="block mb-1">WhatsApp <span className="text-red-600">*</span></label>
             <input
               type="text"
               name="whatsapp"
@@ -217,10 +231,13 @@ function RegistroCliente() {
               autoComplete="off"
               required
             />
+            <p className="text-xs text-yellow-600 mt-1">
+              Incluye el indicativo del país si es posible, ej. 57 seguido de tu número.
+            </p>
           </div>
 
           <div>
-            <label className="block mb-1">Contraseña</label>
+            <label className="block mb-1">Contraseña <span className="text-red-600">*</span></label>
             <input
               type="password"
               name="contraseña"
@@ -230,10 +247,13 @@ function RegistroCliente() {
               autoComplete="off"
               required
             />
+            <p className="text-xs text-yellow-600 mt-1">
+              Mínimo 6 caracteres.
+            </p>
           </div>
 
           <div>
-            <label className="block mb-2">Modalidad de atencion que buscas</label>
+            <label className="block mb-2">Modalidad de atención que buscas <span className="text-red-600">*</span></label>
             <div className="flex gap-4">
               <label className="flex items-center gap-2">
                 <input
@@ -265,13 +285,13 @@ function RegistroCliente() {
                   checked={formData.coberturaVirtualNacional}
                   onChange={handleChange}
                 />
-                Busco atencion virtual sin importar la ciudad del experto
+                Busco atención virtual sin importar la ciudad del experto
               </label>
             </div>
           )}
 
           <div>
-            <label className="block mb-1">Ciudad donde requieres el servicio</label>
+            <label className="block mb-1">Ciudad donde requieres el servicio <span className="text-red-600">*</span></label>
             <div className="flex gap-2">
               <select
                 value={departamentoId}
@@ -296,10 +316,13 @@ function RegistroCliente() {
                 ))}
               </select>
             </div>
+            <p className="text-xs text-yellow-600 mt-1">
+              Si buscas atención virtual sin importar la ciudad, marca la casilla de arriba en vez de elegir ciudad.
+            </p>
           </div>
 
           <div>
-            <label className="block mb-1">Foto de perfil</label>
+            <label className="block mb-1">Foto de perfil <span className="text-red-600">*</span></label>
             <input
               type="file"
               accept="image/png, image/jpeg"
@@ -307,12 +330,15 @@ function RegistroCliente() {
               className="w-full p-2 border rounded bg-white"
               required
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Una foto clara y reciente de tu rostro, para que los expertos sepan con quien hablan.
+            <p className="text-xs text-yellow-600 mt-1">
+              Una foto clara y reciente de tu rostro, para que los expertos sepan con quién hablan.
             </p>
           </div>
 
           <div className="flex flex-col gap-2">
+            <p className="text-sm text-yellow-600 font-semibold">
+              Para completar tu registro, marca las siguientes casillas: <span className="text-red-600">*</span>
+            </p>
             <label className="flex items-start gap-2">
               <input
                 type="checkbox"
