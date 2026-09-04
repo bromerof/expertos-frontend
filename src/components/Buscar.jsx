@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { API_URL } from '../config'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import Header from './Header'
 
 function Buscar() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [expertos, setExpertos] = useState([])
   const [busqueda, setBusqueda] = useState('')
   const [departamentos, setDepartamentos] = useState([])
@@ -22,7 +23,18 @@ function Buscar() {
       return
     }
 
-    cargarExpertos()
+    // Si vinimos desde el buscador de la landing, precargamos lo que la
+    // persona ya escribio/eligio ahi, para no hacerla buscar dos veces
+    const busquedaInicial = searchParams.get('busqueda') || ''
+    const departamentoInicial = searchParams.get('departamento') || ''
+    setBusqueda(busquedaInicial)
+    setDepartamentoId(departamentoInicial)
+
+    const paramsIniciales = {}
+    if (busquedaInicial) paramsIniciales.busqueda = busquedaInicial
+    if (departamentoInicial) paramsIniciales.departamento = departamentoInicial
+
+    cargarExpertos(paramsIniciales)
     fetch(API_URL + '/api/departamentos')
       .then(res => res.json())
       .then(data => setDepartamentos(data))

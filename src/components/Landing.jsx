@@ -9,12 +9,19 @@ function Landing() {
   const navigate = useNavigate()
   const [busqueda, setBusqueda] = useState('')
   const [categorias, setCategorias] = useState([])
+  const [departamentos, setDepartamentos] = useState([])
+  const [departamentoId, setDepartamentoId] = useState('')
 
   useEffect(() => {
     fetch(API_URL + '/api/categorias')
       .then(res => res.json())
       .then(data => setCategorias(data.slice(0, 10)))
       .catch(err => console.error('Error al cargar categorias:', err))
+
+    fetch(API_URL + '/api/departamentos')
+      .then(res => res.json())
+      .then(data => setDepartamentos(data))
+      .catch(err => console.error('Error al cargar departamentos:', err))
   }, [])
 
   const handleSoporte = () => {
@@ -33,8 +40,13 @@ function Landing() {
     const token = localStorage.getItem('token')
     const rol = localStorage.getItem('rol')
 
+    const params = new URLSearchParams()
+    if (busqueda.trim()) params.set('busqueda', busqueda.trim())
+    if (departamentoId) params.set('departamento', departamentoId)
+    const query = params.toString()
+
     if (token && rol === 'cliente') {
-      navigate('/buscar')
+      navigate('/buscar' + (query ? '?' + query : ''))
     } else {
       navigate('/registro-cliente')
     }
@@ -101,14 +113,24 @@ function Landing() {
           Busca por profesión, servicio o categoría, revisa su experiencia y contacta directamente.
         </p>
 
-        <form onSubmit={handleBuscarHero} className="flex gap-2 max-w-xl mx-auto">
+        <form onSubmit={handleBuscarHero} className="flex flex-col sm:flex-row gap-2 max-w-2xl mx-auto">
           <input
             type="text"
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            placeholder="Ej. Diseñador gráfico, contador, programador..."
+            placeholder="¿Qué necesitas? Ej. Diseñador gráfico, contador..."
             className="w-full p-3 rounded border border-gray-300"
           />
+          <select
+            value={departamentoId}
+            onChange={(e) => setDepartamentoId(e.target.value)}
+            className="p-3 rounded border border-gray-300 sm:w-48"
+          >
+            <option value="">📍 Todo el país</option>
+            {departamentos.map((depto) => (
+              <option key={depto._id} value={depto._id}>{depto.nombre}</option>
+            ))}
+          </select>
           <button
             type="submit"
             className="px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f] whitespace-nowrap"

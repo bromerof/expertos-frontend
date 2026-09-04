@@ -649,6 +649,14 @@ function PanelExperto() {
               )}
 
               <div className="flex gap-3 mt-4">
+                {experto.rol === 'cliente' && experto.verificado && (
+                  <Link
+                    to="/buscar"
+                    className="px-4 py-2 bg-yellow-400 text-[#2C3E50] rounded font-bold cursor-pointer hover:bg-yellow-500"
+                  >
+                    Buscar experto
+                  </Link>
+                )}
                 <button
                   onClick={iniciarEdicion}
                   className="px-4 py-2 bg-[#2C3E50] text-white rounded cursor-pointer hover:bg-[#1a252f]"
