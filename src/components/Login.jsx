@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { API_URL } from '../config'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import Header from './Header'
 
 function Login() {
@@ -105,6 +105,10 @@ function Login() {
           >
             Iniciar sesión
           </button>
+
+          <Link to="/olvide-contrasena" className="text-center text-[#2C3E50] underline text-sm">
+            ¿Olvidaste tu contraseña?
+          </Link>
         </form>
       </div>
     </div>
