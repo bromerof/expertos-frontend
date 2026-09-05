@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { API_URL } from '../config'
 import { useNavigate, Link } from 'react-router-dom'
 import Header from './Header'
 
 function RegistroCliente() {
   const navigate = useNavigate()
+  const botonGoogleRef = useRef(null)
+
   const [formData, setFormData] = useState({
     nombre: '',
     tipoDocumento: 'CC',
@@ -33,6 +35,10 @@ function RegistroCliente() {
   const [enviando, setEnviando] = useState(false)
   const [pasoEnvio, setPasoEnvio] = useState('')
 
+  // Estado especifico del flujo de "Continuar con Google"
+  const [credencialGoogle, setCredencialGoogle] = useState(null)
+  const [fotoGoogleUrl, setFotoGoogleUrl] = useState('')
+
   useEffect(() => {
     fetch(API_URL + '/api/departamentos')
       .then(res => res.json())
@@ -47,6 +53,74 @@ function RegistroCliente() {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }, [error])
+
+  const handleCredentialResponse = (response) => {
+    setError('')
+    setEnviando(true)
+    setPasoEnvio('Verificando tu cuenta de Google...')
+
+    fetch(API_URL + '/api/auth/google/verificar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ credential: response.credential })
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al verificar con Google')
+        }
+        return data
+      })
+      .then((data) => {
+        if (data.existe) {
+          localStorage.setItem('token', data.token)
+          localStorage.setItem('expertoId', data.experto.id)
+          localStorage.setItem('rol', 'cliente')
+          navigate('/panel')
+        } else {
+          setCredencialGoogle(response.credential)
+          setFormData((prev) => ({ ...prev, nombre: data.nombre, correo: data.correo }))
+          setFotoGoogleUrl(data.foto)
+          setEnviando(false)
+          setPasoEnvio('')
+        }
+      })
+      .catch((err) => {
+        setError(err.message)
+        setEnviando(false)
+        setPasoEnvio('')
+      })
+  }
+
+  // Dibuja el boton oficial de Google apenas la libreria este disponible
+  useEffect(() => {
+    if (credencialGoogle) return
+
+    const intentarDibujar = () => {
+      if (window.google && botonGoogleRef.current) {
+        window.google.accounts.id.initialize({
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+          callback: handleCredentialResponse
+        })
+        window.google.accounts.id.renderButton(botonGoogleRef.current, {
+          theme: 'outline',
+          size: 'large',
+          text: 'continue_with',
+          width: 320
+        })
+        return true
+      }
+      return false
+    }
+
+    if (!intentarDibujar()) {
+      const intervalo = setInterval(() => {
+        if (intentarDibujar()) clearInterval(intervalo)
+      }, 300)
+      return () => clearInterval(intervalo)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [credencialGoogle])
 
   const cargarMunicipios = (idDepartamento) => {
     if (municipiosPorDepartamento[idDepartamento]) {
@@ -73,6 +147,19 @@ function RegistroCliente() {
     setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value })
   }
 
+  const validarCamposComunes = () => {
+    if (!municipioId && !formData.coberturaVirtualNacional) {
+      setError('Debes seleccionar tu ciudad, o marcar cobertura nacional virtual')
+      return false
+    }
+    if (!aceptaTerminos || !aceptaDatos) {
+      setError('Debes aceptar los Términos de Uso y autorizar el tratamiento de tus datos personales')
+      return false
+    }
+    return true
+  }
+
+  // Registro normal, con correo y contraseña (sin Google)
   const handleSubmit = (e) => {
     e.preventDefault()
     setError('')
@@ -80,15 +167,7 @@ function RegistroCliente() {
     const confirmar = window.confirm('Revisa que toda tu información esté correcta antes de continuar. ¿Deseas registrarte con estos datos?')
     if (!confirmar) return
 
-    if (!municipioId && !formData.coberturaVirtualNacional) {
-      setError('Debes seleccionar tu ciudad, o marcar cobertura nacional virtual')
-      return
-    }
-
-    if (!aceptaTerminos || !aceptaDatos) {
-      setError('Debes aceptar los Términos de Uso y autorizar el tratamiento de tus datos personales')
-      return
-    }
+    if (!validarCamposComunes()) return
 
     if (!fotoPerfil) {
       setError('Debes subir tu foto de perfil')
@@ -120,7 +199,6 @@ function RegistroCliente() {
         return data
       })
       .then(async (datosCliente) => {
-        // Quedamos logueados automaticamente con el token que devuelve el registro
         localStorage.setItem('token', datosCliente.token)
         localStorage.setItem('expertoId', datosCliente._id)
         localStorage.setItem('rol', 'cliente')
@@ -149,6 +227,56 @@ function RegistroCliente() {
       })
   }
 
+  // Completar registro cuando ya se verifico con Google (sin contraseña, sin subir foto)
+  const handleSubmitGoogle = (e) => {
+    e.preventDefault()
+    setError('')
+
+    const confirmar = window.confirm('Revisa que toda tu información esté correcta antes de continuar. ¿Deseas registrarte con estos datos?')
+    if (!confirmar) return
+
+    if (!validarCamposComunes()) return
+
+    setEnviando(true)
+    setPasoEnvio('Creando tu cuenta...')
+
+    fetch(API_URL + '/api/auth/google/completar-registro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        credential: credencialGoogle,
+        tipoDocumento: formData.tipoDocumento,
+        numeroDocumento: formData.numeroDocumento,
+        whatsapp: formData.whatsapp,
+        ubicaciones: municipioId ? [municipioId] : [],
+        atiendePresencial: formData.atiendePresencial,
+        atiendeVirtual: formData.atiendeVirtual,
+        coberturaVirtualNacional: formData.coberturaVirtualNacional,
+        terminosAceptados: aceptaTerminos,
+        datosAceptados: aceptaDatos,
+        comunicacionesAceptadas: aceptaComunicaciones
+      })
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al completar el registro')
+        }
+        return data
+      })
+      .then((datosCliente) => {
+        localStorage.setItem('token', datosCliente.token)
+        localStorage.setItem('expertoId', datosCliente._id)
+        localStorage.setItem('rol', 'cliente')
+        navigate('/espera-aprobacion')
+      })
+      .catch((err) => {
+        setError(err.message)
+        setEnviando(false)
+        setPasoEnvio('')
+      })
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -166,19 +294,94 @@ function RegistroCliente() {
           <p className="bg-red-100 text-red-700 p-3 rounded mb-4 font-semibold">{error}</p>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4" autoComplete="off">
-          <div>
-            <label className="block mb-1">Nombre completo <span className="text-red-600">*</span></label>
-            <input
-              type="text"
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              autoComplete="off"
-              required
-            />
+        {enviando && !credencialGoogle && (
+          <p className="text-sm text-gray-600 mb-4">{pasoEnvio}</p>
+        )}
+
+        {!credencialGoogle && (
+          <>
+            <div ref={botonGoogleRef} className="mb-4"></div>
+
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-1 h-px bg-gray-300"></div>
+              <span className="text-xs text-gray-400">o regístrate con tu correo</span>
+              <div className="flex-1 h-px bg-gray-300"></div>
+            </div>
+          </>
+        )}
+
+        {credencialGoogle && (
+          <div className="bg-white border border-gray-300 rounded p-3 mb-4 flex items-center gap-3">
+            {fotoGoogleUrl && (
+              <img src={fotoGoogleUrl} alt="Foto de Google" className="w-12 h-12 rounded-full" />
+            )}
+            <div>
+              <p className="font-bold text-sm">{formData.nombre}</p>
+              <p className="text-xs text-gray-500">{formData.correo}</p>
+            </div>
           </div>
+        )}
+
+        <form onSubmit={credencialGoogle ? handleSubmitGoogle : handleSubmit} className="flex flex-col gap-4" autoComplete="off">
+          {!credencialGoogle && (
+            <>
+              <div>
+                <label className="block mb-1">Nombre completo <span className="text-red-600">*</span></label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded"
+                  autoComplete="off"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Correo electrónico <span className="text-red-600">*</span></label>
+                <input
+                  type="email"
+                  name="correo"
+                  value={formData.correo}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded"
+                  autoComplete="off"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1">Contraseña <span className="text-red-600">*</span></label>
+                <input
+                  type="password"
+                  name="contraseña"
+                  value={formData.contraseña}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded"
+                  autoComplete="off"
+                  required
+                />
+                <p className="text-xs text-yellow-600 mt-1">
+                  Mínimo 6 caracteres.
+                </p>
+              </div>
+
+              <div>
+                <label className="block mb-1">Foto de perfil <span className="text-red-600">*</span></label>
+                <input
+                  type="file"
+                  accept="image/png, image/jpeg"
+                  onChange={(e) => setFotoPerfil(e.target.files[0])}
+                  className="w-full p-2 border rounded bg-white"
+                  required
+                />
+                <p className="text-xs text-yellow-600 mt-1">
+                  Una foto clara y reciente de tu rostro, para que los expertos sepan con quién hablan.
+                </p>
+              </div>
+            </>
+          )}
 
           <div>
             <label className="block mb-1">Tipo de documento <span className="text-red-600">*</span></label>
@@ -211,19 +414,6 @@ function RegistroCliente() {
           </div>
 
           <div>
-            <label className="block mb-1">Correo electrónico <span className="text-red-600">*</span></label>
-            <input
-              type="email"
-              name="correo"
-              value={formData.correo}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              autoComplete="off"
-              required
-            />
-          </div>
-
-          <div>
             <label className="block mb-1">WhatsApp <span className="text-red-600">*</span></label>
             <input
               type="text"
@@ -236,22 +426,6 @@ function RegistroCliente() {
             />
             <p className="text-xs text-yellow-600 mt-1">
               Incluye el indicativo del país si es posible, ej. 57 seguido de tu número.
-            </p>
-          </div>
-
-          <div>
-            <label className="block mb-1">Contraseña <span className="text-red-600">*</span></label>
-            <input
-              type="password"
-              name="contraseña"
-              value={formData.contraseña}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              autoComplete="off"
-              required
-            />
-            <p className="text-xs text-yellow-600 mt-1">
-              Mínimo 6 caracteres.
             </p>
           </div>
 
@@ -321,20 +495,6 @@ function RegistroCliente() {
             </div>
             <p className="text-xs text-yellow-600 mt-1">
               Si buscas atención virtual sin importar la ciudad, marca la casilla de arriba en vez de elegir ciudad.
-            </p>
-          </div>
-
-          <div>
-            <label className="block mb-1">Foto de perfil <span className="text-red-600">*</span></label>
-            <input
-              type="file"
-              accept="image/png, image/jpeg"
-              onChange={(e) => setFotoPerfil(e.target.files[0])}
-              className="w-full p-2 border rounded bg-white"
-              required
-            />
-            <p className="text-xs text-yellow-600 mt-1">
-              Una foto clara y reciente de tu rostro, para que los expertos sepan con quién hablan.
             </p>
           </div>
 
