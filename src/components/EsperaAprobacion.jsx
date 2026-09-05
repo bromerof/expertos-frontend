@@ -34,13 +34,13 @@ function EsperaAprobacion() {
 
         <p className="text-gray-500 text-sm mb-8">
           Puedes cerrar esta página tranquilamente. Cuando quieras verificar si ya fuiste
-          aprobado, entra a tu panel.
+          aprobado, inicia sesión de nuevo.
         </p>
         <Link
           to="/panel"
           className="inline-block px-6 py-3 bg-[#2C3E50] text-white rounded font-bold cursor-pointer hover:bg-[#1a252f]"
         >
-          Ir a mi panel
+          Iniciar sesión
         </Link>
       </div>
     </div>

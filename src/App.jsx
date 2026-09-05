@@ -1,4 +1,5 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useNavigate } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
 import Landing from './components/Landing'
 import Buscar from './components/Buscar'
 import PerfilExperto from './components/PerfilExperto'
