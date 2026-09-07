@@ -41,6 +41,7 @@ function RegistroExperto() {
   const [aceptaComunicaciones, setAceptaComunicaciones] = useState(false)
 
   const [fotoPerfil, setFotoPerfil] = useState(null)
+  const [previsualizacionFoto, setPrevisualizacionFoto] = useState('')
   const [fotoDocumentoFrente, setFotoDocumentoFrente] = useState(null)
   const [fotoDocumentoReverso, setFotoDocumentoReverso] = useState(null)
   const [enviando, setEnviando] = useState(false)
@@ -522,13 +523,28 @@ function RegistroExperto() {
 
           <div>
             <label className="block mb-1">Foto de perfil <span className="text-red-600">*</span></label>
-            <input
-              type="file"
-              accept="image/png, image/jpeg"
-              onChange={(e) => setFotoPerfil(e.target.files[0])}
-              className="w-full p-2 border rounded bg-white"
-              required
-            />
+            <div className="flex items-center gap-3 mb-2">
+              {previsualizacionFoto ? (
+                <img src={previsualizacionFoto} alt="Vista previa" className="w-16 h-16 rounded-full object-cover border border-gray-300" />
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center border border-gray-300">
+                  <svg viewBox="0 0 24 24" className="w-9 h-9 text-gray-400" fill="currentColor">
+                    <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.2-8 5v2h16v-2c0-2.8-3.6-5-8-5Z" />
+                  </svg>
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/png, image/jpeg"
+                onChange={(e) => {
+                  const archivo = e.target.files[0]
+                  setFotoPerfil(archivo)
+                  setPrevisualizacionFoto(archivo ? URL.createObjectURL(archivo) : '')
+                }}
+                className="flex-1 p-2 border rounded bg-white"
+                required
+              />
+            </div>
             <p className="text-xs text-yellow-600 mt-1">
               Una foto clara y reciente de tu rostro. Se mostrará en tu perfil público.
             </p>

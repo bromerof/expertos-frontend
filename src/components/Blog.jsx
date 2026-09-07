@@ -3,9 +3,17 @@ import { Link } from 'react-router-dom'
 import { API_URL } from '../config'
 import Header from './Header'
 
+// Quita tildes y pasa a minusculas, para que "informacion" tambien encuentre
+// "información" al buscar, igual que en el resto de la plataforma
+function quitarTildes(texto) {
+  if (!texto) return ''
+  return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+}
+
 function Blog() {
   const [articulos, setArticulos] = useState([])
   const [error, setError] = useState('')
+  const [busqueda, setBusqueda] = useState('')
 
   useEffect(() => {
     fetch(API_URL + '/api/blog')
@@ -20,12 +28,28 @@ function Blog() {
       .catch((err) => setError(err.message))
   }, [])
 
+  const terminoBusqueda = quitarTildes(busqueda)
+  const articulosFiltrados = terminoBusqueda.trim()
+    ? articulos.filter((a) =>
+        quitarTildes(a.titulo).includes(terminoBusqueda) ||
+        quitarTildes(a.resumen).includes(terminoBusqueda)
+      )
+    : articulos
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
 
       <div className="p-6 max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold text-[#2C3E50] mb-6">Blog de EXPERTOS</h2>
+        <h2 className="text-2xl font-bold text-[#2C3E50] mb-4">Blog de EXPERTOS</h2>
+
+        <input
+          type="text"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          placeholder="Buscar un tema de interés..."
+          className="w-full max-w-md p-3 rounded border border-gray-300 mb-6"
+        />
 
         {error && (
           <p className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</p>
@@ -33,9 +57,11 @@ function Blog() {
 
         {articulos.length === 0 ? (
           <p className="text-gray-500">Aun no hay articulos publicados.</p>
+        ) : articulosFiltrados.length === 0 ? (
+          <p className="text-gray-500">No encontramos ningún artículo que coincida con "{busqueda}".</p>
         ) : (
           <div className="grid sm:grid-cols-2 gap-6">
-            {articulos.map((a) => (
+            {articulosFiltrados.map((a) => (
               <Link
                 key={a._id}
                 to={`/blog/${a._id}`}

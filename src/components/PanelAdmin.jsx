@@ -194,11 +194,16 @@ function PanelAdmin() {
     const confirmar = window.confirm('¿Rechazar esta solicitud? Se eliminará por completo y la persona tendría que registrarse de nuevo si quiere volver a intentarlo.')
     if (!confirmar) return
 
+    const motivo = window.prompt('¿Por qué rechazas esta solicitud? Este motivo se le enviará por correo a la persona.')
+    if (motivo === null) return // cancelo el prompt, no seguimos
+
     fetch(API_URL + '/api/admin/expertos/' + id + '/rechazar', {
       method: 'DELETE',
       headers: {
-        'Authorization': 'Bearer ' + token
-      }
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ motivo })
     })
       .then(async (res) => {
         const data = await res.json()
