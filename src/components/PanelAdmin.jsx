@@ -120,6 +120,27 @@ function PanelAdmin() {
       .catch((err) => setErrorCobros(err.message))
   }
 
+  const handleEliminarCobro = (id) => {
+    const confirmar = window.confirm('¿Eliminar este registro del historial? Esto NO reembolsa ni afecta el cobro real en Wompi, solo borra el registro guardado aqui.')
+    if (!confirmar) return
+
+    fetch(API_URL + '/api/admin/cobros-pro/' + id, {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al eliminar el registro')
+        }
+        return data
+      })
+      .then(() => {
+        cargarCobrosPro()
+      })
+      .catch((err) => setErrorCobros(err.message))
+  }
+
   const handleEjecutarCobro = () => {
     setEjecutandoCobro(true)
     setMensajeCobro('')
@@ -169,9 +190,12 @@ function PanelAdmin() {
       })
   }
 
-  const handleSuspender = (id) => {
-    fetch(API_URL + '/api/admin/expertos/' + id + '/suspender', {
-      method: 'PUT',
+  const handleRechazar = (id) => {
+    const confirmar = window.confirm('¿Rechazar esta solicitud? Se eliminará por completo y la persona tendría que registrarse de nuevo si quiere volver a intentarlo.')
+    if (!confirmar) return
+
+    fetch(API_URL + '/api/admin/expertos/' + id + '/rechazar', {
+      method: 'DELETE',
       headers: {
         'Authorization': 'Bearer ' + token
       }
@@ -179,15 +203,45 @@ function PanelAdmin() {
       .then(async (res) => {
         const data = await res.json()
         if (!res.ok) {
-          throw new Error(data.mensaje || 'Error al suspender')
+          throw new Error(data.mensaje || 'Error al rechazar')
         }
         return data
       })
       .then(() => {
         cargarPendientes()
+        cargarTodosLosExpertos()
       })
       .catch((err) => {
         setError(err.message)
+      })
+  }
+
+  const handleToggleSuspendido = (id, estaVerificado) => {
+    setErrorPro('')
+    const ruta = estaVerificado ? 'suspender' : 'aprobar'
+    const mensajeConfirmacion = estaVerificado
+      ? '¿Suspender esta cuenta? La persona ya no podra usar la plataforma hasta que la reactives.'
+      : '¿Reactivar esta cuenta?'
+
+    const confirmar = window.confirm(mensajeConfirmacion)
+    if (!confirmar) return
+
+    fetch(API_URL + '/api/admin/expertos/' + id + '/' + ruta, {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + token }
+    })
+      .then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al actualizar el estado de la cuenta')
+        }
+        return data
+      })
+      .then(() => {
+        cargarTodosLosExpertos()
+      })
+      .catch((err) => {
+        setErrorPro(err.message)
       })
   }
 
@@ -394,10 +448,10 @@ function PanelAdmin() {
                       Aprobar
                     </button>
                     <button
-                      onClick={() => handleSuspender(experto._id)}
+                      onClick={() => handleRechazar(experto._id)}
                       className="px-4 py-2 bg-[#E74C3C] text-white rounded cursor-pointer hover:bg-[#c0392b]"
                     >
-                      Suspender
+                      Rechazar
                     </button>
                   </div>
                 </div>
@@ -439,9 +493,10 @@ function PanelAdmin() {
         )}
 
         <div className="mt-10 max-w-3xl">
-          <h2 className="text-xl font-bold mb-1">Gestionar plan Pro (prueba)</h2>
+          <h2 className="text-xl font-bold mb-1">Gestionar cuentas y plan Pro</h2>
           <p className="text-sm text-gray-500 mb-4">
-            Activa o quita el plan Pro manualmente en cualquier cuenta de experto, mientras Wompi no este conectado.
+            Suspende o reactiva cualquier cuenta (experto o cliente) ya aprobada. Tambien puedes activar
+            o quitar el plan Pro manualmente en cuentas de experto, mientras Wompi no este conectado.
             Esto no genera ningun cobro real.
           </p>
 
@@ -466,19 +521,41 @@ function PanelAdmin() {
                           ⭐ Pro
                         </span>
                       )}
+                      {!experto.verificado && (
+                        <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-full">
+                          Suspendido
+                        </span>
+                      )}
                     </p>
-                    <p className="text-sm text-gray-500">{experto.correo}</p>
+                    <p className="text-sm text-gray-500">
+                      {experto.correo}{' '}
+                      <span className="capitalize">({experto.rol})</span>
+                    </p>
                   </div>
-                  <button
-                    onClick={() => handleTogglePro(experto._id, experto.plan)}
-                    className={
-                      experto.plan === 'pro'
-                        ? 'px-4 py-2 bg-gray-300 rounded cursor-pointer hover:bg-gray-400'
-                        : 'px-4 py-2 bg-yellow-400 text-[#2C3E50] rounded font-bold cursor-pointer hover:bg-yellow-500'
-                    }
-                  >
-                    {experto.plan === 'pro' ? 'Quitar Pro' : 'Activar Pro'}
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleToggleSuspendido(experto._id, experto.verificado)}
+                      className={
+                        experto.verificado
+                          ? 'px-4 py-2 bg-[#E74C3C] text-white rounded cursor-pointer hover:bg-[#c0392b]'
+                          : 'px-4 py-2 bg-[#27AE60] text-white rounded cursor-pointer hover:bg-[#1e8449]'
+                      }
+                    >
+                      {experto.verificado ? 'Suspender' : 'Reactivar'}
+                    </button>
+                    {experto.rol === 'experto' && (
+                      <button
+                        onClick={() => handleTogglePro(experto._id, experto.plan)}
+                        className={
+                          experto.plan === 'pro'
+                            ? 'px-4 py-2 bg-gray-300 rounded cursor-pointer hover:bg-gray-400'
+                            : 'px-4 py-2 bg-yellow-400 text-[#2C3E50] rounded font-bold cursor-pointer hover:bg-yellow-500'
+                        }
+                      >
+                        {experto.plan === 'pro' ? 'Quitar Pro' : 'Activar Pro'}
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -540,6 +617,12 @@ function PanelAdmin() {
                         Verificar
                       </button>
                     )}
+                    <button
+                      onClick={() => handleEliminarCobro(c._id)}
+                      className="text-xs text-[#E74C3C] underline cursor-pointer"
+                    >
+                      Eliminar
+                    </button>
                   </div>
                 </div>
               ))}
