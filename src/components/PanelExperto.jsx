@@ -524,7 +524,8 @@ function PanelExperto() {
       <Header />
 
       <div className="p-6">
-        <h2 className="text-xl font-bold mb-4">Mi panel</h2>
+        <h2 className="text-xl font-bold mb-1">Mi panel</h2>
+        <p className="text-gray-600 mb-4">👋 ¡Bienvenido de nuevo, {experto.nombre ? experto.nombre.split(' ')[0] : ''}!</p>
 
         {error && (
           <p className="bg-red-100 text-red-700 p-3 rounded mb-4 max-w-lg">{error}</p>
