@@ -4,8 +4,8 @@ const secciones = [
   {
     h: '1. Identificacion de la plataforma',
     p: [
-      'Expertos es una plataforma digital operada por [NOMBRE LEGAL DE LA EMPRESA O PERSONA RESPONSABLE], identificada con [NIT/IDENTIFICACION], con domicilio en [CIUDAD, COLOMBIA].',
-      'Correo de contacto: [CORREO]',
+      'Expertos es una plataforma digital operada por Konetta Avanzadora de Negocios, identificada con NIT 902102788, con domicilio en Sincelejo, Sucre, Colombia.',
+      'Correo de contacto: info.konetta@gmail.com',
       'Expertos facilita la interacción entre clientes y profesionales, permitiendo la publicación, busqueda, solicitud y contratación de servicios profesionales.'
     ]
   },
@@ -188,7 +188,7 @@ const secciones = [
   {
     h: '20. Contacto',
     p: ['Para preguntas, solicitudes o reclamos relacionados con estos Terminos:'],
-    ul: ['Correo: [CORREO]', 'Direccion: [DIRECCION]', 'Responsable: [NOMBRE LEGAL]', 'NIT: [NIT]']
+    ul: ['Correo: info.konetta@gmail.com', 'Teléfono: 3113867225', 'Responsable: Konetta Avanzadora de Negocios', 'NIT: 902102788']
   }
 ]
 
@@ -199,7 +199,7 @@ function Terminos() {
 
       <div className="p-6 max-w-2xl mx-auto">
         <h2 className="text-2xl font-bold text-[#2C3E50] mb-1">Terminos de Uso de Expertos</h2>
-        <p className="text-sm text-gray-500 mb-6">Ultima actualización: [FECHA]</p>
+        <p className="text-sm text-gray-500 mb-6">Ultima actualización: 7 de septiembre de 2026</p>
 
         <p className="text-gray-700 text-sm mb-6">
           Bienvenido a Expertos, una plataforma digital que facilita la conexion entre personas y empresas

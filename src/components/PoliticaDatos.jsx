@@ -12,7 +12,7 @@ const secciones = [
   {
     h: '2. Responsable del tratamiento',
     p: ['El responsable del tratamiento de los datos personales es:'],
-    ul: ['[NOMBRE LEGAL DE LA EMPRESA]', 'NIT: [NIT]', 'Domicilio: [CIUDAD]', 'Correo electrónico: [CORREO]', 'Telefono: [TELEFONO]']
+    ul: ['Konetta Avanzadora de Negocios', 'NIT: 902102788', 'Domicilio: Sincelejo, Sucre, Colombia', 'Correo electrónico: info.konetta@gmail.com', 'Telefono: 3113867225']
   },
   {
     h: '3. Datos que podemos recolectar',
@@ -91,7 +91,7 @@ const secciones = [
   {
     h: '9. Atención de consultas y reclamos',
     p: ['Los titulares podrán presentar consultas, solicitudes, peticiones o reclamos relacionados con sus datos personales a través de:'],
-    ul: ['Correo: [CORREO DE DATOS]', 'Dirección: [DIRECCION]'],
+    ul: ['Correo: info.konetta@gmail.com'],
     p2: [
       'La solicitud deberá permitir identificar al titular y explicar claramente la peticion.',
       'Expertos atendera las solicitudes dentro de los terminos establecidos por la legislación colombiana aplicable.'
@@ -144,7 +144,7 @@ const secciones = [
   {
     h: '17. Contacto',
     p: ['Para cualquier inquietud relacionada con el tratamiento de datos personales:'],
-    ul: ['Responsable: [NOMBRE LEGAL]', 'NIT: [NIT]', 'Correo: [CORREO]', 'Telefono: [TELEFONO]', 'Dirección: [DIRECCION]']
+    ul: ['Responsable: Konetta Avanzadora de Negocios', 'NIT: 902102788', 'Correo: info.konetta@gmail.com', 'Telefono: 3113867225']
   }
 ]
 
@@ -158,7 +158,7 @@ function PoliticaDatos() {
           Politica de Tratamiento de Datos Personales de Expertos
         </h2>
         <p className="text-sm text-gray-500 mb-6">
-          En cumplimiento de la Ley 1581 de 2012 (Habeas Data) — Ultima actualización: [FECHA]
+          En cumplimiento de la Ley 1581 de 2012 (Habeas Data) — Ultima actualización: 7 de septiembre de 2026
         </p>
 
         <div className="flex flex-col gap-5 text-gray-700 text-sm leading-relaxed">

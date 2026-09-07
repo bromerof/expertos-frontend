@@ -42,7 +42,7 @@ function ReglasExpertos() {
 
       <div className="p-6 max-w-2xl mx-auto">
         <h2 className="text-2xl font-bold text-[#2C3E50] mb-1">Reglas para Expertos de Expertos</h2>
-        <p className="text-sm text-gray-500 mb-6">Ultima actualización: [FECHA]</p>
+        <p className="text-sm text-gray-500 mb-6">Ultima actualización: 7 de septiembre de 2026</p>
 
         <p className="text-gray-700 text-sm mb-6">
           Estas Reglas para Expertos establecen las condiciones específicas que deben cumplir las personas
@@ -75,11 +75,11 @@ function ReglasExpertos() {
             <h3 className="font-bold text-[#2C3E50] mb-1">Contacto</h3>
             <p>Para preguntas relacionadas con estas reglas:</p>
             <ul className="list-disc list-inside">
-              <li>Correo: [CORREO]</li>
-              <li>Responsable: [NOMBRE LEGAL]</li>
-              <li>NIT: [NIT]</li>
-              <li>Dirección: [DIRECCION]</li>
-              <li>Ciudad: [CIUDAD, COLOMBIA]</li>
+              <li>Correo: info.konetta@gmail.com</li>
+              <li>Teléfono: 3113867225</li>
+              <li>Responsable: Konetta Avanzadora de Negocios</li>
+              <li>NIT: 902102788</li>
+              <li>Ciudad: Sincelejo, Sucre, Colombia</li>
             </ul>
           </section>
         </div>
