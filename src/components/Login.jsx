@@ -52,7 +52,7 @@ function Login() {
     fetch(API_URL + '/api/auth/google/verificar', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ credential: response.credential })
+      body: JSON.stringify({ credential: response.credential, rolEsperado: rolSeleccionado })
     })
       .then(async (res) => {
         const data = await res.json()
@@ -65,10 +65,11 @@ function Login() {
         if (data.existe) {
           localStorage.setItem('token', data.token)
           localStorage.setItem('expertoId', data.experto.id)
-          localStorage.setItem('rol', 'cliente')
+          localStorage.setItem('rol', data.experto.rol)
           navigate('/panel')
         } else {
-          setErrorGoogle('Todavía no tienes una cuenta de cliente con este correo de Google. Regístrate primero.')
+          const textoRol = rolSeleccionado === 'experto' ? 'de experto' : 'de cliente'
+          setErrorGoogle(`Todavía no tienes una cuenta ${textoRol} con este correo de Google. Regístrate primero.`)
         }
       })
       .catch((err) => {
@@ -76,10 +77,12 @@ function Login() {
       })
   }
 
-  // Solo mostramos "Continuar con Google" cuando la persona quiere entrar
-  // como cliente (los expertos siempre completan su registro completo)
+  // Mostramos "Continuar con Google" para clientes y expertos (no para
+  // administradores). Los expertos solo pueden USAR este boton para iniciar
+  // sesion si ya tienen una cuenta creada de la forma normal -- el registro
+  // de experto con Google no existe, porque requiere documentos y profesion.
   useEffect(() => {
-    if (rolSeleccionado !== 'cliente') return
+    if (rolSeleccionado === 'admin') return
 
     const intentarDibujar = () => {
       if (window.google && botonGoogleRef.current) {
@@ -140,7 +143,7 @@ function Login() {
           </p>
         </div>
 
-        {rolSeleccionado === 'cliente' && (
+        {rolSeleccionado !== 'admin' && (
           <>
             <div ref={botonGoogleRef} className="mb-4"></div>
             <div className="flex items-center gap-3 mb-4">
