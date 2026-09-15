@@ -45,8 +45,11 @@ function Header({ children }) {
             <Link to="/panel" className="text-white underline cursor-pointer hover:text-gray-300">
               Mi panel
             </Link>
-            <Link to="/oportunidades" className="text-white underline cursor-pointer hover:text-gray-300">
-              Oportunidades
+            <Link
+              to="/oportunidades"
+              className="px-3 py-1.5 bg-yellow-400 text-[#2C3E50] rounded font-bold cursor-pointer hover:bg-yellow-500"
+            >
+              ⭐ Oportunidades
             </Link>
           </>
         )}
