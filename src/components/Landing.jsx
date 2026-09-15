@@ -120,6 +120,18 @@ function Landing() {
           Busca por profesión, servicio o categoría, revisa su experiencia y contacta directamente.
         </p>
 
+        <div className="max-w-2xl mx-auto mb-8">
+          <div className="relative w-full rounded-lg overflow-hidden shadow-lg" style={{ paddingBottom: '56.25%' }}>
+            <iframe
+              src="https://www.youtube.com/embed/W6vVWnwSF9A"
+              title="Cómo usar EXPERTOS"
+              className="absolute top-0 left-0 w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+
         <form onSubmit={handleBuscarHero} className="flex flex-col sm:flex-row gap-2 max-w-2xl mx-auto">
           <input
             type="text"
