@@ -6,6 +6,7 @@ import Header from './Header'
 function PanelAdmin() {
   const navigate = useNavigate()
   const [pendientes, setPendientes] = useState([])
+  const [busquedaPendientes, setBusquedaPendientes] = useState('')
   const [error, setError] = useState('')
   const [cargando, setCargando] = useState(true)
 
@@ -315,6 +316,21 @@ function PanelAdmin() {
       })
   }
 
+  // Quita tildes y pasa a minusculas, igual que en el resto de la plataforma
+  const quitarTildes = (texto) => {
+    if (!texto) return ''
+    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  }
+
+  const terminoPendientes = quitarTildes(busquedaPendientes)
+  const pendientesFiltrados = terminoPendientes.trim()
+    ? pendientes.filter((p) =>
+        quitarTildes(p.nombre).includes(terminoPendientes) ||
+        quitarTildes(p.correo).includes(terminoPendientes) ||
+        (p.numeroDocumento || '').includes(busquedaPendientes.trim())
+      )
+    : pendientes
+
   return (
     <div className="min-h-screen bg-gray-50">
             <Header />
@@ -422,13 +438,25 @@ function PanelAdmin() {
           <p className="bg-red-100 text-red-700 p-3 rounded mb-4 max-w-2xl">{error}</p>
         )}
 
+        {pendientes.length > 0 && (
+          <input
+            type="text"
+            value={busquedaPendientes}
+            onChange={(e) => setBusquedaPendientes(e.target.value)}
+            placeholder="Buscar por nombre, correo o documento..."
+            className="w-full max-w-md p-2 border rounded mb-4"
+          />
+        )}
+
         {cargando ? (
           <p>Cargando...</p>
         ) : pendientes.length === 0 ? (
           <p>No hay expertos pendientes de aprobación.</p>
+        ) : pendientesFiltrados.length === 0 ? (
+          <p>Ningún resultado coincide con "{busquedaPendientes}".</p>
         ) : (
           <div className="flex flex-col gap-4 max-w-3xl">
-            {pendientes.map((experto) => (
+            {pendientesFiltrados.map((experto) => (
               <div
                 key={experto._id}
                 className="bg-white border border-gray-300 rounded p-4"
