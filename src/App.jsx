@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { useEffect, useRef } from 'react'
 import Landing from './components/Landing'
 import Buscar from './components/Buscar'
@@ -28,7 +28,56 @@ import RestablecerContrasena from './components/RestablecerContrasena'
 import ElegirPlan from './components/ElegirPlan'
 import EsperaAprobacion from './components/EsperaAprobacion'
 
+// Cierra la sesion automaticamente despues de 1 hora sin ninguna actividad
+// (sin clics, sin escribir, sin moverse). Se reinicia cada vez que la
+// persona hace algo, para que solo se cierre si de verdad esta inactiva.
+const TIEMPO_INACTIVIDAD_MS = 60 * 60 * 1000 // 1 hora
+
 function App() {
+  const navigate = useNavigate()
+  const ubicacion = useLocation()
+  const temporizadorRef = useRef(null)
+
+  // Avisa a Google Analytics cada vez que la persona cambia de pantalla.
+  // Es necesario hacerlo asi (a mano) porque, al ser una aplicacion de una
+  // sola pagina, el navegador nunca "recarga" de verdad entre pantallas, y
+  // Analytics por si solo no se entera de esos cambios.
+  useEffect(() => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'page_view', {
+        page_path: ubicacion.pathname + ubicacion.search,
+        page_title: document.title
+      })
+    }
+  }, [ubicacion])
+
+  useEffect(() => {
+    const cerrarSesionPorInactividad = () => {
+      const token = localStorage.getItem('token')
+      if (!token) return // nadie logueado, no hay nada que cerrar
+
+      localStorage.removeItem('token')
+      localStorage.removeItem('expertoId')
+      localStorage.removeItem('rol')
+      navigate('/login')
+    }
+
+    const reiniciarTemporizador = () => {
+      if (temporizadorRef.current) clearTimeout(temporizadorRef.current)
+      temporizadorRef.current = setTimeout(cerrarSesionPorInactividad, TIEMPO_INACTIVIDAD_MS)
+    }
+
+    const eventos = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart']
+    eventos.forEach((evento) => window.addEventListener(evento, reiniciarTemporizador))
+
+    reiniciarTemporizador()
+
+    return () => {
+      eventos.forEach((evento) => window.removeEventListener(evento, reiniciarTemporizador))
+      if (temporizadorRef.current) clearTimeout(temporizadorRef.current)
+    }
+  }, [navigate])
+
   return (
     <Routes>
       <Route path="/" element={<Landing />} />

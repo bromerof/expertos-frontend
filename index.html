@@ -28,6 +28,18 @@
     <meta name="twitter:image" content="https://www.expertosymas.com/og-banner.png" />
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <!-- Google Analytics (GA4). El envio automatico de "page_view" queda
+    desactivado (send_page_view: false) porque EXPERTOS es una aplicacion de
+    una sola pagina: nosotras mismas avisamos cada cambio de pantalla desde
+    App.jsx, para que Analytics no se quede solo con la primera carga. -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4Z27F4ZW57"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-4Z27F4ZW57', { send_page_view: false });
+    </script>
   </head>
   <body>
     <div id="root"></div>
