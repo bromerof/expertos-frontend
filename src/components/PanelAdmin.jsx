@@ -316,6 +316,29 @@ function PanelAdmin() {
       })
   }
 
+  // Muestra una fecha guardada en un formato legible, en hora de Colombia
+  const formatearFecha = (fecha) => {
+    if (!fecha) return '—'
+    return new Date(fecha).toLocaleString('es-CO', { dateStyle: 'medium', timeStyle: 'short' })
+  }
+
+  // Calcula cuanto tiempo paso entre dos fechas, en un texto legible
+  // (ej. "2 días y 3 horas", "45 min"). Se usa para saber cuanto tarda
+  // el admin en aprobar solicitudes, o cuanto lleva esperando una pendiente.
+  const calcularDuracion = (inicio, fin) => {
+    if (!inicio || !fin) return null
+    const ms = new Date(fin) - new Date(inicio)
+    if (ms < 0) return null
+
+    const minutos = Math.floor(ms / 60000)
+    const horas = Math.floor(minutos / 60)
+    const dias = Math.floor(horas / 24)
+
+    if (dias > 0) return `${dias} día${dias !== 1 ? 's' : ''} y ${horas % 24} hora${(horas % 24) !== 1 ? 's' : ''}`
+    if (horas > 0) return `${horas} hora${horas !== 1 ? 's' : ''} y ${minutos % 60} min`
+    return `${minutos} min`
+  }
+
   // Quita tildes y pasa a minusculas, igual que en el resto de la plataforma
   const quitarTildes = (texto) => {
     if (!texto) return ''
@@ -472,6 +495,10 @@ function PanelAdmin() {
                     <p className="text-sm text-gray-600 mt-1">
                       {experto.tipoDocumento}: {experto.numeroDocumento}
                     </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Registrado: {formatearFecha(experto.fechaCreacion)}
+                      {' · '}Esperando hace {calcularDuracion(experto.fechaCreacion, new Date()) || '—'}
+                    </p>
                   </div>
                   <div className="flex gap-2">
                     <button
@@ -563,6 +590,15 @@ function PanelAdmin() {
                     <p className="text-sm text-gray-500">
                       {experto.correo}{' '}
                       <span className="capitalize">({experto.rol})</span>
+                    </p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Registrado: {formatearFecha(experto.fechaCreacion)}
+                      {experto.fechaAprobacion && (
+                        <>
+                          {' · '}Aprobado: {formatearFecha(experto.fechaAprobacion)}
+                          {' · '}Tardó {calcularDuracion(experto.fechaCreacion, experto.fechaAprobacion)} en aprobarse
+                        </>
+                      )}
                     </p>
                   </div>
                   <div className="flex gap-2">
