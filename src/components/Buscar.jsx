@@ -10,6 +10,22 @@ function quitarTildes(texto) {
   return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
 }
 
+// Saca las iniciales (primer nombre + primer apellido) a partir del nombre
+// completo, que viene guardado en un solo campo. Como no sabemos con certeza
+// donde empieza el apellido, usamos la cantidad de palabras:
+// - 4 o mas palabras ("Jahir Manuel Vivanco Martinez"): 1ra y 3ra -> "JV"
+// - 2 o 3 palabras ("Juan Perez", "Juan Perez Gomez"): 1ra y 2da -> "JP"
+// - 1 palabra ("Juan"): solo la primera letra -> "J"
+// - sin nombre: "?" para que el circulo nunca quede vacio
+function obtenerIniciales(nombreCompleto) {
+  if (!nombreCompleto) return '?'
+  const palabras = nombreCompleto.trim().split(/\s+/).filter(p => p !== '')
+  if (palabras.length === 0) return '?'
+  if (palabras.length === 1) return palabras[0].charAt(0).toUpperCase()
+  const segunda = palabras.length >= 4 ? palabras[2] : palabras[1]
+  return (palabras[0].charAt(0) + segunda.charAt(0)).toUpperCase()
+}
+
 function Buscar() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
@@ -254,7 +270,12 @@ function Buscar() {
                     ⭐ Pro
                   </span>
                 )}
-                <div className="w-16 h-16 rounded-full bg-gray-300 mb-2"></div>
+                <div
+                  className="w-16 h-16 rounded-full bg-[#2C3E50] text-white text-xl font-bold flex items-center justify-center mb-2 select-none"
+                  aria-hidden="true"
+                >
+                  {obtenerIniciales(experto.nombre)}
+                </div>
                 <p className="font-bold">{experto.nombre}</p>
                 <p className="text-gray-500">
                   {experto.profesion && experto.profesion.nombre.trim().toLowerCase() === 'otra' && experto.otraProfesionTexto
